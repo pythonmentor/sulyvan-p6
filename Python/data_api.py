@@ -5,12 +5,6 @@
 import requests as req
 from pprint import pprint
 
-CATEGORIES = ['Sodas',
-              'Eaux',
-              'Salade',
-              'Pizza',
-              'Glaces'
-              ]
 
 class ApiCollectingData:
     """
@@ -18,6 +12,11 @@ class ApiCollectingData:
         of products, in selected categories, thus to give a valid
         structure for the insertion in the database
     """
+    CATEGORIES = ['Sodas',
+                  'Eaux',
+                  'Salade',
+                  'Pizza',
+                  'Glaces']
 
     def __init__(self):
         """ The constructor is not used here """
@@ -28,7 +27,7 @@ class ApiCollectingData:
         all_products = []
         # Address OpenFooFact.org the API FR locating
         api = "https://fr.openfoodfacts.org/cgi/search.pl"
-        for category in CATEGORIES:
+        for category in self.CATEGORIES:
             # This config for  for connecting API
             config = {"action": "process",
                       # Get the result by category
@@ -83,11 +82,6 @@ class ApiCollectingData:
                 ###############################
         return product_final
 
-
-# product_tables = produit: name, price = product['product_name_fr']
-                 # type_produit: type_produit = sub_category
-                 # ingredients: designation, poids = product['generic_name_fr'] / quantity
-
     def validate_the_data(self, keys, products_section):
         """ Validate the complete fields """
         for key in keys:
@@ -98,12 +92,9 @@ class ApiCollectingData:
 
 def main():
     """ Initialize the data collect """
-
-    # Download the response
     downloader = ApiCollectingData()
     connect = downloader.connect_and_harvest()
     downloader.format_final_response(connect)
-
 
 if __name__ == "__main__":
     main()
