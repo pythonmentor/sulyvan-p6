@@ -15,6 +15,10 @@ class FakeCollectingData:
         """ The constructor is not used here """
         pass
 
+    def number_random(self, count, count1):
+        fake_number = randint(count, count1)
+        return str(fake_number)
+
     def first_name(self):
         name = fake.first_name()
         return name
@@ -31,10 +35,6 @@ class FakeCollectingData:
         telephone = fake.telephone()
         return telephone
 
-    def number_random(self, count, count1):
-        fake_number = randint(count, count1)
-        return str(fake_number)
-
     def adresse(self):
         numb = self.number_random(1, 9999)
         street = fake.street_name()
@@ -50,7 +50,10 @@ class FakeCollectingData:
 
     def adresse_complement(self):
         random_num = str(self.number_random(1, 999))
-        complement_list = '', 'App ' + random_num, 'Etage ' + random_num, 'Sonette ' + random_num, ''
+        complement_list = ('', \
+                          'App ' + random_num,
+                          'Etage ' + random_num,
+                          'Sonette ' + random_num, '')
         complement = sample(complement_list, 1)
         return complement
 

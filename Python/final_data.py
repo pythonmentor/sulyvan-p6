@@ -31,7 +31,8 @@ class  JoinTheData:
         return key
 
     def employee(self):
-        list_qualite = 'Gerant', 'Pizzayolos', 'Hotesse', 'Livreur'
+        list_qualite = ('Gerant', 'Pizzayolos',
+                        'Hotesse', 'Livreur')
         id = self.fake.number_random(1, 9999)
         quality = sample(list_qualite, 1)
         date = self.fake.fake_date()
@@ -46,11 +47,16 @@ class  JoinTheData:
         ####
         phone = self.fake.number_random(1, 9999999999)
 
-        key = id, quality, date, name, last_name, password, adress, mail, phone,
+        key = (id, quality, date, name,
+               last_name, password, adress,
+               mail, phone)
         return key
 
     def restaurant(self):
-        list_name = 'Oc Pizza Lyon', 'Oc Pizza Paris', 'Oc Pizza Marseille', 'Oc Pizza Genéve'
+        list_name = ('Oc Pizza Lyon',
+                     'Oc Pizza Paris',
+                     'Oc Pizza Marseille',
+                     'Oc Pizza Genéve')
         # id = (autoIncrement)
         restaurant_name =sample(list_name, 1)
         ###
@@ -62,7 +68,10 @@ class  JoinTheData:
         return key
 
     def status(self):
-        list_status = 'En court de préparation', 'Commande terminé', 'Commande en cours de livraison', 'Commande livré'
+        list_status = ('En court de préparation',
+                       'Commande terminé',
+                       'Commande en cours de livraison',
+                       'Commande livré')
         id =self.fake.number_random(1, 9999)
         status = sample(list_status, 1)
 
@@ -87,7 +96,10 @@ class  JoinTheData:
         return key
 
     def payment(self):
-        list_paiement = 'Espece', 'Carte bancaire', 'Cheque bancaire', 'Tiket restaurant'
+        list_paiement = ('Espece',
+                         'Carte bancaire',
+                         'Cheque bancaire',
+                         'Tiket restaurant')
         # id = (autoIncrement)
         mode = sample(list_paiement, 1)
         return mode
@@ -169,7 +181,8 @@ class  JoinTheData:
           composition = self.composition()
           basket = self.basket()
 
-          key = employe, #actor, employe, adress, restaurant, status, order, bill, payment, mail, phone
+          key = employe, #actor, employe, adress, restaurant,
+          # status, order, bill, payment, mail, phone
           print(key)
 
 def main():
