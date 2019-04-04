@@ -333,7 +333,7 @@ CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`stockProduit` (
   `restaurant_id` INT NOT NULL,
   `nom` VARCHAR(255) NOT NULL,
   `poids` DECIMAL(5,2) NOT NULL,
-  `conditionnement` VARCHAR(155) NOT NULL,
+  `conditionnement` VARCHAR(155) NULL,
   `quantite` INT NOT NULL,
   PRIMARY KEY (`ingredient_id`, `restaurant_id`),
   INDEX `fk_ingredient_has_restaurant_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,

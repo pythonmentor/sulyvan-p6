@@ -77,7 +77,7 @@ class InsertData:
         self.db.query("""INSERT INTO restaurant
               (nom_restaurant)
               VALUES (
-              WHERE """, )
+              WHERE); """, )
 
     def insert_status(self):
         self.db.query("""INSERT INTO statut
@@ -99,17 +99,17 @@ class InsertData:
 
     def insert_assoviate_table(self):
 
-        # insert product stock
+        # Single product, multiply the quantity
         self.db.query("""INSERT INTO stockProduit
-              (nom, poids, conditionnement, quantite)
-              VALUES ( WHERE """, )
+              (nom, poids, conditionnement, quantite) 
+              VALUES ( WHERE); """, )
 
         # insert composition
         self.db.query("""INSERT INTO composition
               (quantite)
               VALUES ( WHERE );""", )
 
-        # insert basket line
+        # insert basket line and multiply price
         self.db.query("""INSERT INTO pannier
               (article, quantite, prix)
               VALUES ( WHERE); """, )

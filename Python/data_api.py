@@ -92,6 +92,7 @@ class ApiCollectingData:
 
 def main():
     """ Initialize the data collect """
+
     downloader = ApiCollectingData()
     connect = downloader.connect_and_harvest()
     downloader.format_final_response(connect)
