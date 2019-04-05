@@ -174,17 +174,18 @@ ENGINE = InnoDB;
 -- Table `Oc_Pizza_db`.`employe`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`employe` (
-  `id_ss_employe` VARCHAR(30) NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `num_ss_employe` VARCHAR(30) NOT NULL,
   `qualite` VARCHAR(155) NOT NULL,
   `date_entree` DATE NOT NULL,
   `restaurant_id` INT NOT NULL,
   `statut_id` INT UNSIGNED NOT NULL,
   `acteur_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id_ss_employe`),
-  UNIQUE INDEX `num_ss_UNIQUE` (`id_ss_employe` ASC) VISIBLE,
+  UNIQUE INDEX `num_ss_UNIQUE` (`num_ss_employe` ASC) VISIBLE,
   INDEX `fk_employe_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
   INDEX `fk_employe_statut1_idx` (`statut_id` ASC) VISIBLE,
   INDEX `fk_employe_acteur1_idx` (`acteur_id` ASC) VISIBLE,
+  PRIMARY KEY (`id`),
   CONSTRAINT `fk_employe_restaurant1`
     FOREIGN KEY (`restaurant_id`)
     REFERENCES `Oc_Pizza_db`.`restaurant` (`id`)

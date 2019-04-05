@@ -18,18 +18,48 @@ class InsertData:
         self.db = db
         self.database = InsertData(self.db)
 
-    def insert_actor(self):
+    def insert_actor(self, name, last_name, password):
         """Table list / VALUES"""
         self.db.query("""INSERT INTO acteur
               (nom, prenom, password)
-              VALUES (
-              WHERE); """, )
+              VALUES (:name, :last_name, :password)
+              ; """,name=name, last_name=last_name, password=password)
 
-    def insert_adress(self):
+    def insert_employe(self, num_ss, quality, date):
+        self.db.query("""INSERT INTO employe
+              (id_ss_employe, qualite, date_entree)
+              VALUES (:num_ss, :quality, :date)
+              ; """, num_ss=num_ss, quality=quality, date=date)
+
+    def insert_status(self, id, status):
+        self.db.query("""INSERT INTO statut
+              (id, statut)
+              VALUES (:id, :status)
+              ; """, id=id, status=status)
+
+    def insert_adress(self, adress, zip, country, adress2):
         self.db.query("""INSERT INTO adresse
               (adresse, code_postal, ville, adresse_compl)
-              VALUES (
-              WHERE);""", )
+              VALUES (:adress, :zip, :country, :adress2)
+              ; """, adress=adress, zip=zip, country=country, adress2=adress2)
+
+    def insert_mail(self, mail):
+        self.db.query("""INSERT INTO mail
+              (mail)
+              VALUES (:mail)
+              ; """, mail=mail)
+
+    def insert_phone(self, id, phone):
+        self.db.query("""INSERT INTO telephone
+           (id, telephone)
+              VALUES (:id, :phone)
+              ; """, id=id, phone=phone)
+
+    def insert_restaurant(self, name):
+        self.db.query("""INSERT INTO restaurant
+              (nom_restaurant)
+              VALUES (:name)
+              ; """, name=name)
 
     def insert_commande(self):
         self.db.query("""INSERT INTO commande
@@ -37,27 +67,9 @@ class InsertData:
               VALUES (
               WHERE );""", )
 
-    def insert_employe(self):
-        self.db.query("""INSERT INTO employe
-              (id_ss_employe, qualite, date_entree)
-              VALUES (
-              WHERE); """, )
-
     def insert_facture(self):
             self.db.query("""INSERT INTO facture
               (date_facture, type_produit, prix, tva)
-              VALUES (
-              WHERE );""", )
-
-    def insert_ingredient(self):
-        self.db.query("""INSERT INTO ingredient
-              (designation, poids)
-              VALUES (
-              WHERE); """, )
-
-    def insert_mail(self):
-        self.db.query("""INSERT INTO mail
-              (mail)
               VALUES (
               WHERE );""", )
 
@@ -67,29 +79,17 @@ class InsertData:
               VALUES (
               WHERE); """, )
 
+    def insert_ingredient(self):
+        self.db.query("""INSERT INTO ingredient
+              (designation, poids)
+              VALUES (
+              WHERE); """, )
+
     def insert_product(self):
         self.db.query("""INSERT INTO produit
               (nom, prix)
               VALUES (
               WHERE );""", )
-
-    def insert_restaurant(self):
-        self.db.query("""INSERT INTO restaurant
-              (nom_restaurant)
-              VALUES (
-              WHERE); """, )
-
-    def insert_status(self):
-        self.db.query("""INSERT INTO statut
-              (id, statut)
-              VALUES (
-              WHERE );""", )
-
-    def insert_phone(self):
-        self.db.query("""INSERT INTO telephone
-           (id, telephone)
-              VALUES (
-              WHERE); """, )
 
     def insert_product_type(self):
         self.db.query("""INSERT INTO typeproduit
@@ -97,7 +97,7 @@ class InsertData:
               VALUES (
               WHERE );""", )
 
-    def insert_assoviate_table(self):
+    def insert_associate_table(self):
 
         # Single product, multiply the quantity
         self.db.query("""INSERT INTO stockProduit
