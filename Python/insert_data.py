@@ -14,7 +14,6 @@ class InsertData:
 
     def __init__(self, db):
         """ Connect to Mysql database from the class DataBaseUser() """
-        self.final = JoinTheData()
         # self.instance = final.generate_data()
         self.db = db
         self.database = InsertData(self.db)
@@ -134,7 +133,7 @@ def main():
     insert = InsertData(db)
     downloader = JoinTheData()
     final = downloader.generate_data()
-    insert_row = insert.insert_rows(final)
+    insert.insert_rows(final)
 
 if __name__ == "__main__":
     main()
