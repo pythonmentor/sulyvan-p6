@@ -152,8 +152,9 @@ class  JoinTheData:
           composition = self.composition()
           basket = self.basket()
           # key = employe, actor, employe, adress, restaurant,
-          key = (actor, employe, adress, mail, phone)
+          key = employe, actor, adress, mail, phone
           print(key)
+          return key
 
 def main():
     """ Initialize the data collect """

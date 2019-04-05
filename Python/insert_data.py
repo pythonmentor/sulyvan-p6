@@ -25,14 +25,14 @@ class InsertData:
          return self.db
 
 
-    def insert_actor(self, name, last_name, password, *args):
+    def insert_actor(self, name, last_name, password):
         """Table list / VALUES"""
         self.db.query("""INSERT INTO acteur
               (nom, prenom, password)
               VALUES (:name, :last_name, :password)
               ; """,name=name, last_name=last_name, password=password)
 
-    def insert_employe(self, num_ss, quality, date, *args):
+    def insert_employe(self, num_ss, quality, date):
         self.db.query("""INSERT INTO employe
               (id_ss_employe, qualite, date_entree)
               VALUES (:num_ss, :quality, :date)
@@ -44,25 +44,25 @@ class InsertData:
               VALUES (:id, :status)
               ; """, id=id, status=status)
 
-    def insert_adress(self, adress, zip, country, adress2, *args):
+    def insert_adress(self, adress, zip, country, adress2):
         self.db.query("""INSERT INTO adresse
               (adresse, code_postal, ville, adresse_compl)
               VALUES (:adress, :zip, :country, :adress2)
               ; """, adress=adress, zip=zip, country=country, adress2=adress2)
 
-    def insert_mail(self, mail, *args):
+    def insert_mail(self, mail):
         self.db.query("""INSERT INTO mail
               (mail)
               VALUES (:mail)
               ; """, mail=mail)
 
-    def insert_phone(self, id, phone, *args):
+    def insert_phone(self, id, phone):
         self.db.query("""INSERT INTO telephone
            (id, telephone)
               VALUES (:id, :phone)
               ; """, id=id, phone=phone)
 
-    def insert_restaurant(self, name, *args):
+    def insert_restaurant(self, name):
         self.db.query("""INSERT INTO restaurant
               (nom_restaurant)
               VALUES (:name)
@@ -135,7 +135,6 @@ class InsertData:
 
 
 def main():
-
     downloader = JoinTheData()
     finals = downloader.generate_data()
 
