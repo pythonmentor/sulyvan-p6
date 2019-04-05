@@ -84,8 +84,8 @@ class  JoinTheData:
     def phone(self):
         id = (self.fake.number_random(1, 999))
         phone = self.fake.fake_telephone()
-        key = id, phone
-        return key
+        key = phone
+        return id, key
 
     def adress(self):
         # id = (autoIncrement)
@@ -134,6 +134,7 @@ class  JoinTheData:
         return None
 
     def generate_data(self):
+        for g in range(10):
           actor =  self.actor()
           employe = self.employee()
           adress = self.adress()
@@ -152,14 +153,13 @@ class  JoinTheData:
           basket = self.basket()
           # key = employe, actor, employe, adress, restaurant,
           key = (actor, employe, adress, mail, phone)
-          return key
+          print(key)
 
 def main():
     """ Initialize the data collect """
 
     fake = JoinTheData()
-    generate = fake.generate_data()
-    # print(generate)
+    fake.generate_data()
     # api = ApiCollectingData()
 
     # join the data in the class

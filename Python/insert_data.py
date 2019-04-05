@@ -1,9 +1,8 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
+from Python.final_data import JoinTheData
 
-from Python import data_api
-from Python import data
 
 import records as rec
 
@@ -15,47 +14,49 @@ class InsertData:
 
     def __init__(self, db):
         """ Connect to Mysql database from the class DataBaseUser() """
+        self.final = JoinTheData()
+        # self.instance = final.generate_data()
         self.db = db
         self.database = InsertData(self.db)
 
-    def insert_actor(self, name, last_name, password):
+    def insert_actor(self, name, last_name, password, *args):
         """Table list / VALUES"""
         self.db.query("""INSERT INTO acteur
               (nom, prenom, password)
               VALUES (:name, :last_name, :password)
               ; """,name=name, last_name=last_name, password=password)
 
-    def insert_employe(self, num_ss, quality, date):
+    def insert_employe(self, num_ss, quality, date, *args):
         self.db.query("""INSERT INTO employe
               (id_ss_employe, qualite, date_entree)
               VALUES (:num_ss, :quality, :date)
               ; """, num_ss=num_ss, quality=quality, date=date)
 
-    def insert_status(self, id, status):
+    def insert_status(self, id, status, *args):
         self.db.query("""INSERT INTO statut
               (id, statut)
               VALUES (:id, :status)
               ; """, id=id, status=status)
 
-    def insert_adress(self, adress, zip, country, adress2):
+    def insert_adress(self, adress, zip, country, adress2, *args):
         self.db.query("""INSERT INTO adresse
               (adresse, code_postal, ville, adresse_compl)
               VALUES (:adress, :zip, :country, :adress2)
               ; """, adress=adress, zip=zip, country=country, adress2=adress2)
 
-    def insert_mail(self, mail):
+    def insert_mail(self, mail, *args):
         self.db.query("""INSERT INTO mail
               (mail)
               VALUES (:mail)
               ; """, mail=mail)
 
-    def insert_phone(self, id, phone):
+    def insert_phone(self, id, phone, *args):
         self.db.query("""INSERT INTO telephone
            (id, telephone)
               VALUES (:id, :phone)
               ; """, id=id, phone=phone)
 
-    def insert_restaurant(self, name):
+    def insert_restaurant(self, name, *args):
         self.db.query("""INSERT INTO restaurant
               (nom_restaurant)
               VALUES (:name)
@@ -114,15 +115,26 @@ class InsertData:
               (article, quantite, prix)
               VALUES ( WHERE); """, )
 
-    def insert_to_oreder(self):
-        # organize the insert data in database
-        pass
+    def insert_rows(self, final):
+        """ Completion the data row per row """
+        for final in final:
+            self.insert_actor(*final)
+            self.insert_employe(*final)
+            self.insert_status(*final)
+            self.insert_adress(*final)
+            self.insert_mail(*final)
+            self.insert_phone(*final)
+            self.insert_restaurant(*final)
+        return True
 
 
 def main():
 
-    rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
-
+    db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
+    insert = InsertData(db)
+    downloader = JoinTheData()
+    final = downloader.generate_data()
+    insert_row = insert.insert_rows(final)
 
 if __name__ == "__main__":
     main()
