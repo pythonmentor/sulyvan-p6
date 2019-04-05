@@ -3,7 +3,6 @@
 
 from Python.final_data import JoinTheData
 
-
 import records as rec
 
 
@@ -12,11 +11,19 @@ class InsertData:
     The class insert the data in database Oc Pizza
     """
 
+
     def __init__(self, db):
         """ Connect to Mysql database from the class DataBaseUser() """
-        # self.instance = final.generate_data()
         self.db = db
-        self.database = InsertData(self.db)
+        self.database = self.connect_mysql()
+
+
+
+    def connect_mysql(self):
+         """ Connecting in the database """
+         self.db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
+         return self.db
+
 
     def insert_actor(self, name, last_name, password, *args):
         """Table list / VALUES"""
@@ -114,9 +121,9 @@ class InsertData:
               (article, quantite, prix)
               VALUES ( WHERE); """, )
 
-    def insert_rows(self, final):
+    def insert_rows(self, finals):
         """ Completion the data row per row """
-        for final in final:
+        for final in finals:
             self.insert_actor(*final)
             self.insert_employe(*final)
             self.insert_status(*final)
@@ -129,11 +136,14 @@ class InsertData:
 
 def main():
 
-    db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
-    insert = InsertData(db)
     downloader = JoinTheData()
-    final = downloader.generate_data()
-    insert.insert_rows(final)
+    finals = downloader.generate_data()
+
+    print(finals)
+    db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
+    create = InsertData(db)
+
+    create.insert_rows(finals)
 
 if __name__ == "__main__":
     main()
