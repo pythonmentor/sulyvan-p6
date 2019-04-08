@@ -130,10 +130,10 @@ class  DataDowloader:
             quality = sample(list_qualite, 1)
             date = self.fake.fake_date()
             status = self.status()
-            mail = self.mail()
+            mail = self.fake.fake_mail()
             id = self.fake.number_random(1, 999)
             phone = self.fake.fake_telephone()
-            restaurant = self.restaurant()
+            restaurant = self.fake.restaurant()
             key = (name, last_name, password,        # Actor_table
                    num_ss_employe, quality, date,    # Employe_table
                    id, status,                       # Status_table

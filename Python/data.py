@@ -38,7 +38,7 @@ class FakeCollectingData:
         prefix = "+3356",  "+0176", "+0450"
         form = sample(prefix, 1)
         number = self.number_random(1, 999999)
-        telephone = str(form) + number
+        telephone = str(form ) + number
         return telephone
 
     def adresse(self):
@@ -79,15 +79,21 @@ class FakeCollectingData:
         fake_number = randint(count, count1)
         return str(fake_number)
 
-    def test(self):
-        pass
-
+    def restaurant(self):
+        list_name = ('Oc Pizza Lyon',
+                     'Oc Pizza Paris',
+                     'Oc Pizza Marseille',
+                     'Oc Pizza Genéve')
+        # id = (autoIncrement)
+        restaurant_name =sample(list_name, 1)
+        key = restaurant_name
+        return key
 
 def main():
     """ Initialize the data collect """
 
     fake_data = FakeCollectingData()
-    fake_data.test()
+    # fake_data.test()
 
 if __name__ == "__main__":
     main()
