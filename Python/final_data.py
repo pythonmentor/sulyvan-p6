@@ -117,7 +117,7 @@ class  DataDowloader:
         return None
 
     def generate_data(self):
-        list_qualite = 'Gerant', 'Pizzayolos','Hotesse', 'Livreur'
+        list_qualite = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
         for g in range(10):
             name = self.fake.first_name()
             last_name = self.fake.last_name()
@@ -134,13 +134,13 @@ class  DataDowloader:
             id = self.fake.number_random(1, 999)
             phone = self.fake.fake_telephone()
             restaurant = self.fake.restaurant()
-            key = (name, last_name, password,        # Actor_table
+            key = (name, last_name, password,               # Actor_table
                    num_ss_employe, quality, date,    # Employe_table
-                   id, status,                       # Status_table
-                   adress, zip, country, complement, # Adresse_table
-                   mail,                             # Mail_table
-                   id, phone,                        # Phone_table
-                   restaurant)                       # Restaurant_table
+                   id, status,                              # Status_table
+                   adress, zip, country, complement,        # Adresse_table
+                   mail,                                    # Mail_table
+                   id, phone,                                # Phone_table
+                   restaurant)                              # Restaurant_table
             return key
 
 def main():

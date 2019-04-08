@@ -12,11 +12,6 @@ class ApiCollectingData:
         of products, in selected categories, thus to give a valid
         structure for the insertion in the database
     """
-    CATEGORIES = ['Sodas',
-                  'Eaux',
-                  'Salade',
-                  'Pizza',
-                  'Glaces']
 
     def __init__(self):
         """ The constructor is not used here """

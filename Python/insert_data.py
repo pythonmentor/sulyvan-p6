@@ -26,74 +26,48 @@ class InsertData:
          self.db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
          return self.db
 
-    def insert_actor(self):
+    def insert_actor(self, name, last_name, password):
         """Table list / VALUES"""
-        name = self.fake.first_name()
-        last_name = self.fake.last_name()
-        password = self.fake.random_password()
-
         self.db.query("""INSERT INTO acteur
               (nom, prenom, password)
               VALUES (:name, :last_name, :password)
-              ; """,name=name, last_name=last_name, password=password)
+              ; """, name=name, last_name=last_name, password=password)
 
-    def insert_employe(self):
-        list_qualite = 'Gerant', 'Pizzayolos','Hotesse', 'Livreur'
-        num_ss_employe = self.fake.number_random(1, 99999999999999)
-        quality = sample(list_qualite, 1)
-        date = self.fake.fake_date()
-
+    def insert_employe(self, num_ss_employe, quality, date) :
         self.db.query("""INSERT INTO employe
               (num_ss_employe, qualite, date_entree)
               VALUES (:num_ss_employe, :quality, :date)
               ; """, num_ss_employe=num_ss_employe, quality=quality, date=date)
 
-    def insert_status(self):
-        list_status = ('En court de préparation',
-                       'Commande terminé',
-                       'Commande en cours de livraison',
-                       'Commande livré')
-        id =self.fake.number_random(1, 9999)
-        status = sample(list_status, 1)
-
+    def insert_status(self, status_id, status):
         self.db.query("""INSERT INTO statut
               (id, statut)
               VALUES (:id, :status)
-              ; """, id=id, status=status)
+              ; """, id=status_id, status=status)
 
-    def insert_adress(self):
-        adress = self.fake.adresse()
-        zip = self.fake.adresse_zip()
-        country = self.fake.adresse_country()
-        adress2 = self.fake.adresse_complement()
-
+    def insert_adress(self, adress, zip, country, adress2):
         self.db.query("""INSERT INTO adresse
               (adresse, code_postal, ville, adresse_compl)
               VALUES (:adress, :zip, :country, :adress2)
               ; """, adress=adress, zip=zip, country=country, adress2=adress2)
 
-    def insert_mail(self):
-        mail = self.fake.fake_mail()
+    def insert_mail(self, mail):
         self.db.query("""INSERT INTO mail
               (mail)
               VALUES (:mail)
               ; """, mail=mail)
 
-    def insert_phone(self ):
-        id = self.fake.number_random(1, 999)
-        phone = self.fake.fake_telephone()
-
+    def insert_phone(self, phone_id, phone):
         self.db.query("""INSERT INTO telephone
            (id, telephone)
               VALUES (:id, :phone)
-              ; """, id=id, phone=phone)
+              ; """, id=phone_id, phone=phone)
 
-    def insert_restaurant(self):
-        restaurant = self.fake.restaurant()
+    def insert_restaurant(self, restaurant_name):
         self.db.query("""INSERT INTO restaurant
               (nom_restaurant)
               VALUES (:name)
-              ; """, name=restaurant)
+              ; """, name=restaurant_name)
 
     def insert_commande(self):
         self.db.query("""INSERT INTO commande
@@ -151,21 +125,18 @@ class InsertData:
     def insert_rows(self, finals):
         """ Completion the data row per row """
         for final in finals:
-            self.insert_actor()
-            self.insert_employe()
-            self.insert_status()
-            self.insert_adress()
-            self.insert_mail()
-            self.insert_phone()
-            self.insert_restaurant()
+            self.insert_actor(*final)
+            self.insert_employe(*final)
+            self.insert_status(*final)
+            self.insert_adress(*final)
+            self.insert_mail(*final)
+            self.insert_phone(*final)
+            self.insert_restaurant(*final)
         return True
 
-
-
-
 def main():
-    downloader = DataDowloader()
-    finals = downloader.generate_data()
+    downloader = FakeCollectingData()
+    finals = downloader.key()
     print(finals)
 
     db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")

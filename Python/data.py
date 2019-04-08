@@ -30,6 +30,7 @@ class FakeCollectingData:
             password = password + char[randint(0, len(char) - 4)]
         return password
 
+
     def fake_mail(self):
         mail = fake.email()
         return mail
@@ -37,8 +38,9 @@ class FakeCollectingData:
     def fake_telephone(self):
         prefix = "+3356",  "+0176", "+0450"
         form = sample(prefix, 1)
+        num = form
         number = self.number_random(1, 999999)
-        telephone = str(form ) + number
+        telephone = str(num ) + number
         return telephone
 
     def adresse(self):
@@ -71,9 +73,20 @@ class FakeCollectingData:
         key = day, month, year
         return key
 
-    def fake_price(self):
-        price = str(self.number_random(1, 99)) + '.' + str(self.number_random(1, 99) + "€")
-        return price
+    def quality(self):
+        list_qualite = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
+        quality = sample(list_qualite, 1)
+        return quality
+
+    def status(self):
+        list_status = ('En court de préparation',
+                       'Commande terminé',
+                       'Commande en cours de livraison',
+                       'Commande livré')
+        id =self.number_random(1, 9999)
+        status = sample(list_status, 1)
+        key = id, status
+        return key
 
     def number_random(self, count, count1):
         fake_number = randint(count, count1)
@@ -89,11 +102,69 @@ class FakeCollectingData:
         key = restaurant_name
         return key
 
+    def fake_price(self):
+        price = str(self.number_random(1, 99)) + '.' + str(self.number_random(1, 99) + "€")
+        return price
+
+    def payment(self):
+        list_paiement = ('Espece',
+                         'Carte bancaire',
+                         'Cheque bancaire',
+                         'Tiket restaurant')
+        # id = (autoIncrement)
+        mode = sample(list_paiement, 1)
+        return mode
+
+
+    def key(self):
+
+        list_status = ('En court de préparation',
+                       'Commande terminé',
+                       'Commande en cours de livraison',
+                       'Commande livré')
+
+        name = self.first_name()
+        last_name = self.last_name()
+        password = self.random_password()
+
+        num_ss_employe = self.number_random(1, 99999999999999)
+        quality = self.quality()
+        date = self.fake_date()
+
+        status_id =self.number_random(1, 999)
+        status = sample(list_status, 1)
+
+        adress = self.adresse()
+        zip = self.adresse_zip()
+        country = self.adresse_country()
+        adress2 = self.adresse_complement()
+
+        mail = self.fake_mail()
+
+        phone_id = self.number_random(1, 999)
+        phone = self.fake_telephone()
+
+        restaurant_name = self.restaurant()
+
+        actor = (name, last_name, password,
+                 adress, zip, country, adress2,
+                 mail,
+                 phone_id, phone)
+        employe = (name, last_name, password,
+                   adress, zip, country, adress2,
+                   mail,
+                   phone_id, phone,
+                   num_ss_employe, quality, date)
+        key = tuple(actor)
+        print(employe)
+        return  key
+
+
 def main():
     """ Initialize the data collect """
 
     fake_data = FakeCollectingData()
-    # fake_data.test()
+    fake_data.key()
 
 if __name__ == "__main__":
     main()
