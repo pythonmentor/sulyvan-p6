@@ -1,7 +1,7 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
-from Python.final_data import JoinTheData
+from Python.final_data import DataDowloader
 
 import records as rec
 
@@ -17,13 +17,10 @@ class InsertData:
         self.db = db
         self.database = self.connect_mysql()
 
-
-
     def connect_mysql(self):
          """ Connecting in the database """
          self.db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
          return self.db
-
 
     def insert_actor(self, name, last_name, password):
         """Table list / VALUES"""
@@ -32,13 +29,13 @@ class InsertData:
               VALUES (:name, :last_name, :password)
               ; """,name=name, last_name=last_name, password=password)
 
-    def insert_employe(self, num_ss, quality, date):
+    def insert_employe(self, num_ss_employe, quality, date):
         self.db.query("""INSERT INTO employe
-              (id_ss_employe, qualite, date_entree)
-              VALUES (:num_ss, :quality, :date)
-              ; """, num_ss=num_ss, quality=quality, date=date)
+              (num_ss_employe, qualite, date_entree)
+              VALUES (:num_ss_employe, :quality, :date)
+              ; """, num_ss=num_ss_employe, quality=quality, date=date)
 
-    def insert_status(self, id, status, *args):
+    def insert_status(self, id, status):
         self.db.query("""INSERT INTO statut
               (id, statut)
               VALUES (:id, :status)
@@ -124,21 +121,23 @@ class InsertData:
     def insert_rows(self, finals):
         """ Completion the data row per row """
         for final in finals:
-            self.insert_actor(*final)
-            self.insert_employe(*final)
-            self.insert_status(*final)
-            self.insert_adress(*final)
-            self.insert_mail(*final)
-            self.insert_phone(*final)
-            self.insert_restaurant(*final)
+            self.insert_actor(final)
+            self.insert_employe(final)
+            self.insert_status(final)
+            self.insert_adress(final)
+            self.insert_mail(final)
+            self.insert_phone(final)
+            self.insert_restaurant(final)
         return True
 
 
-def main():
-    downloader = JoinTheData()
-    finals = downloader.generate_data()
 
+
+def main():
+    downloader = DataDowloader()
+    finals = downloader.generate_data()
     print(finals)
+
     db = rec.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza_db?charset=utf8mb4")
     create = InsertData(db)
 

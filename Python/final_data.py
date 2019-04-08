@@ -8,28 +8,11 @@ from Python.data_api import ApiCollectingData as Api
 from random import randint, sample
 
 
-class  JoinTheData:
+class  DataDowloader:
 
     def __init__(self):
         self.fake = FakeCollectingData()
         api = Api()
-
-    def actor(self):
-        # id = (autoIncrement)
-        name = self.fake.first_name()
-        last_name = self.fake.last_name()
-        password = self.fake.random_password()
-        key = name, last_name, password
-        return key
-
-    def employee(self):
-        list_qualite = ('Gerant', 'Pizzayolos',
-                        'Hotesse', 'Livreur')
-        num_ss_employe = self.fake.number_random(1, 99999999999999)
-        quality = sample(list_qualite, 1)
-        date = self.fake.fake_date()
-        key = num_ss_employe, quality, date
-        return key
 
     def restaurant(self):
         list_name = ('Oc Pizza Lyon',
@@ -84,7 +67,7 @@ class  JoinTheData:
     def phone(self):
         id = (self.fake.number_random(1, 999))
         phone = self.fake.fake_telephone()
-        key = phone
+        key = id, phone
         return id, key
 
     def adress(self):
@@ -134,33 +117,38 @@ class  JoinTheData:
         return None
 
     def generate_data(self):
+        list_qualite = 'Gerant', 'Pizzayolos','Hotesse', 'Livreur'
         for g in range(10):
-          actor =  self.actor()
-          employe = self.employee()
-          adress = self.adress()
-          restaurant = self.restaurant()
-          status = self.status()
-          order = self.order()
-          bill = self.bill()
-          payment = self.payment()
-          mail = self.mail()
-          phone = self.phone()
-          # ----------------
-          type_product = self.type_product()
-          product = self.product()
-          stock_product = self.stock_product()
-          composition = self.composition()
-          basket = self.basket()
-          # key = employe, actor, employe, adress, restaurant,
-          key = employe, actor, adress, mail, phone
-          print(key)
-          return key
+            name = self.fake.first_name()
+            last_name = self.fake.last_name()
+            password = self.fake.random_password()
+            adress = self.fake.adresse()
+            zip = self.fake.adresse_zip()
+            country = self.fake.adresse_country()
+            complement = self.fake.adresse_complement()
+            num_ss_employe = self.fake.number_random(1, 99999999999999)
+            quality = sample(list_qualite, 1)
+            date = self.fake.fake_date()
+            status = self.status()
+            mail = self.mail()
+            id = self.fake.number_random(1, 999)
+            phone = self.fake.fake_telephone()
+            restaurant = self.restaurant()
+            key = (name, last_name, password,        # Actor_table
+                   num_ss_employe, quality, date,    # Employe_table
+                   id, status,                       # Status_table
+                   adress, zip, country, complement, # Adresse_table
+                   mail,                             # Mail_table
+                   id, phone,                        # Phone_table
+                   restaurant)                       # Restaurant_table
+            return key
 
 def main():
     """ Initialize the data collect """
 
-    fake = JoinTheData()
+    fake = DataDowloader()
     fake.generate_data()
+
     # api = ApiCollectingData()
 
     # join the data in the class
