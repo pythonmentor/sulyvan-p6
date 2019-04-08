@@ -38,9 +38,8 @@ class FakeCollectingData:
     def fake_telephone(self):
         prefix = "+3356",  "+0176", "+0450"
         form = sample(prefix, 1)
-        num = form
         number = self.number_random(1, 999999)
-        telephone = str(num ) + number
+        telephone = form.append(number)
         return telephone
 
     def adresse(self):
@@ -64,7 +63,7 @@ class FakeCollectingData:
                           'Sonette ' + random_num,
                            '')
         complement = sample(complement_list, 1)
-        return complement
+        return tuple(complement)
 
     def fake_date(self):
         day = fake.day_of_month()
@@ -76,7 +75,7 @@ class FakeCollectingData:
     def quality(self):
         list_qualite = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
         quality = sample(list_qualite, 1)
-        return quality
+        return tuple(quality)
 
     def status(self):
         list_status = ('En court de préparation',
@@ -86,7 +85,7 @@ class FakeCollectingData:
         id =self.number_random(1, 9999)
         status = sample(list_status, 1)
         key = id, status
-        return key
+        return tuple(key)
 
     def number_random(self, count, count1):
         fake_number = randint(count, count1)
@@ -99,7 +98,7 @@ class FakeCollectingData:
                      'Oc Pizza Genéve')
         # id = (autoIncrement)
         restaurant_name =sample(list_name, 1)
-        key = restaurant_name
+        key = tuple(restaurant_name)
         return key
 
     def fake_price(self):
@@ -113,15 +112,10 @@ class FakeCollectingData:
                          'Tiket restaurant')
         # id = (autoIncrement)
         mode = sample(list_paiement, 1)
-        return mode
+        return tuple(mode)
 
 
     def key(self):
-
-        list_status = ('En court de préparation',
-                       'Commande terminé',
-                       'Commande en cours de livraison',
-                       'Commande livré')
 
         name = self.first_name()
         last_name = self.last_name()
@@ -132,7 +126,7 @@ class FakeCollectingData:
         date = self.fake_date()
 
         status_id =self.number_random(1, 999)
-        status = sample(list_status, 1)
+        status = self.status()
 
         adress = self.adresse()
         zip = self.adresse_zip()
