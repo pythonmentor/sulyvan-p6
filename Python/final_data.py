@@ -135,11 +135,11 @@ class  DataDowloader:
             phone = self.fake.fake_telephone()
             restaurant = self.fake.restaurant()
             key = (name, last_name, password,               # Actor_table
-                   num_ss_employe, quality, date,    # Employe_table
+                   num_ss_employe, quality, date,           # Employe_table
                    id, status,                              # Status_table
                    adress, zip, country, complement,        # Adresse_table
                    mail,                                    # Mail_table
-                   id, phone,                                # Phone_table
+                   id, phone,                               # Phone_table
                    restaurant)                              # Restaurant_table
             return key
 

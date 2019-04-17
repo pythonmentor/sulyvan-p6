@@ -5,373 +5,364 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema Oc_Pizza_db
+-- Schema Oc_Pizza
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema Oc_Pizza_db
+-- Schema Oc_Pizza
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `Oc_Pizza_db` DEFAULT CHARACTER SET utf8mb4 ;
-USE `Oc_Pizza_db` ;
+CREATE SCHEMA IF NOT EXISTS `Oc_Pizza` DEFAULT CHARACTER SET utf8mb4 ; 
+USE `Oc_Pizza` ;
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`acteur`
+-- Table `Oc_Pizza`.`Status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`acteur` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nom` VARCHAR(155) NOT NULL,
-  `prenom` VARCHAR(155) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  UNIQUE INDEX `id_employe_UNIQUE` (`id` ASC) VISIBLE,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `password_UNIQUE` (`password` ASC) VISIBLE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`telephone`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`telephone` (
-  `id` VARCHAR(12) NOT NULL,
-  `telephone` VARCHAR(20) NULL,
-  `acteur_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_telephone_UNIQUE` (`id` ASC) VISIBLE,
-  UNIQUE INDEX `téléphone_UNIQUE` (`telephone` ASC) VISIBLE,
-  INDEX `fk_telephone_acteur1_idx` (`acteur_id` ASC) VISIBLE,
-  CONSTRAINT `fk_telephone_acteur1`
-    FOREIGN KEY (`acteur_id`)
-    REFERENCES `Oc_Pizza_db`.`acteur` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`statut`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`statut` (
-  `id` INT UNSIGNED NOT NULL,
-  `statut` VARCHAR(155) NOT NULL,
-  UNIQUE INDEX `id_restaurant_UNIQUE` (`id` ASC) VISIBLE,
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Status` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `status` VARCHAR(155) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`mail`
+-- Table `Oc_Pizza`.`Addresses`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`mail` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Addresses` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `address` VARCHAR(45) NOT NULL,
+  `zip_code` VARCHAR(12) NOT NULL,
+  `city` VARCHAR(80) NOT NULL,
+  `additional_address` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Oc_Pizza`.`Phones`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Phones` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `phone` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Oc_Pizza`.`Emails`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Emails` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `mail` VARCHAR(255) NOT NULL,
-  `acteur_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_mail_acteur1_idx` (`acteur_id` ASC) VISIBLE,
-  UNIQUE INDEX `mail_UNIQUE` (`mail` ASC) VISIBLE,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_mail_acteur1`
-    FOREIGN KEY (`acteur_id`)
-    REFERENCES `Oc_Pizza_db`.`acteur` (`id`)
+  UNIQUE INDEX `mail_UNIQUE` (`mail` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Oc_Pizza`.`Restaurants`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Restaurants` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `restaurant_name` VARCHAR(155) NOT NULL,
+  `Addresses_id` INT NOT NULL,
+  `Phones_id` INT NOT NULL,
+  `Emails_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `restaurant_name_UNIQUE` (`restaurant_name` ASC) VISIBLE,
+  INDEX `fk_Restaurants_Addresses1_idx` (`Addresses_id` ASC) VISIBLE,
+  INDEX `fk_Restaurants_Phones1_idx` (`Phones_id` ASC) VISIBLE,
+  INDEX `fk_Restaurants_Emails1_idx` (`Emails_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Restaurants_Addresses1`
+    FOREIGN KEY (`Addresses_id`)
+    REFERENCES `Oc_Pizza`.`Addresses` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Restaurants_Phones1`
+    FOREIGN KEY (`Phones_id`)
+    REFERENCES `Oc_Pizza`.`Phones` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Restaurants_Emails1`
+    FOREIGN KEY (`Emails_id`)
+    REFERENCES `Oc_Pizza`.`Emails` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`restaurant`
+-- Table `Oc_Pizza`.`Actors`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`restaurant` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Actors` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nom_restaurant` VARCHAR(255) NOT NULL,
-  `adresse_id` INT NOT NULL,
-  `mail_id` INT UNSIGNED NOT NULL,
-  `telephone_id` VARCHAR(12) NOT NULL,
+  `first_name` VARCHAR(155) NOT NULL,
+  `last_name` VARCHAR(155) NOT NULL,
+  `authentication_password` VARCHAR(255) NOT NULL,
+  `Emails_id` INT NOT NULL,
+  `Phones_id` INT NOT NULL,
+  `Addresses_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_restaurant_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `fk_restaurant_adresse1_idx` (`adresse_id` ASC) VISIBLE,
-  INDEX `fk_restaurant_mail1_idx` (`mail_id` ASC) VISIBLE,
-  INDEX `fk_restaurant_telephone1_idx` (`telephone_id` ASC) VISIBLE,
-  CONSTRAINT `fk_restaurant_adresse1`
-    FOREIGN KEY (`adresse_id`)
-    REFERENCES `Oc_Pizza_db`.`adresse` (`id`)
+  UNIQUE INDEX `authentication_password_UNIQUE` (`authentication_password` ASC) VISIBLE,
+  INDEX `fk_Actors_Emails1_idx` (`Emails_id` ASC) VISIBLE,
+  INDEX `fk_Actors_Phones1_idx` (`Phones_id` ASC) VISIBLE,
+  INDEX `fk_Actors_Addresses1_idx` (`Addresses_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Actors_Emails1`
+    FOREIGN KEY (`Emails_id`)
+    REFERENCES `Oc_Pizza`.`Emails` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_restaurant_mail1`
-    FOREIGN KEY (`mail_id`)
-    REFERENCES `Oc_Pizza_db`.`mail` (`id`)
+  CONSTRAINT `fk_Actors_Phones1`
+    FOREIGN KEY (`Phones_id`)
+    REFERENCES `Oc_Pizza`.`Phones` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_restaurant_telephone1`
-    FOREIGN KEY (`telephone_id`)
-    REFERENCES `Oc_Pizza_db`.`telephone` (`id`)
+  CONSTRAINT `fk_Actors_Addresses1`
+    FOREIGN KEY (`Addresses_id`)
+    REFERENCES `Oc_Pizza`.`Addresses` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`commande`
+-- Table `Oc_Pizza`.`Employee`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`commande` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `type_produit` VARCHAR(255) NOT NULL,
-  `date_commande` DATE NOT NULL,
-  `statut_id` INT UNSIGNED NOT NULL,
-  `restaurant_id` INT NOT NULL,
-  `acteur_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_commande_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `fk_commande_statut1_idx` (`statut_id` ASC) VISIBLE,
-  INDEX `fk_commande_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
-  INDEX `fk_commande_acteur1_idx` (`acteur_id` ASC) VISIBLE,
-  CONSTRAINT `fk_commande_statut1`
-    FOREIGN KEY (`statut_id`)
-    REFERENCES `Oc_Pizza_db`.`statut` (`id`)
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Employee` (
+  `id` INT NULL,
+  `social_security_numb` VARCHAR(30) NOT NULL,
+  `quality` VARCHAR(100) NOT NULL,
+  `datef_entry` DATE NOT NULL,
+  `Status_id` INT NOT NULL,
+  `Restaurants_id` INT NOT NULL,
+  `Actors_id` INT NOT NULL,
+  UNIQUE INDEX `social_security_numb_UNIQUE` (`social_security_numb` ASC) VISIBLE,
+  INDEX `fk_Employee_Status_idx` (`Status_id` ASC) VISIBLE,
+  INDEX `fk_Employee_Restaurants1_idx` (`Restaurants_id` ASC) VISIBLE,
+  PRIMARY KEY (`Actors_id`),
+  INDEX `fk_Employee_Actors1_idx` (`id` ASC) VISIBLE,
+  CONSTRAINT `fk_Employee_Status`
+    FOREIGN KEY (`Status_id`)
+    REFERENCES `Oc_Pizza`.`Status` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_commande_restaurant1`
-    FOREIGN KEY (`restaurant_id`)
-    REFERENCES `Oc_Pizza_db`.`restaurant` (`id`)
+  CONSTRAINT `fk_Employee_Restaurants1`
+    FOREIGN KEY (`Restaurants_id`)
+    REFERENCES `Oc_Pizza`.`Restaurants` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_commande_acteur1`
-    FOREIGN KEY (`acteur_id`)
-    REFERENCES `Oc_Pizza_db`.`acteur` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`adresse`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`adresse` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `adresse` VARCHAR(255) NOT NULL,
-  `code_postal` VARCHAR(15) NOT NULL,
-  `ville` VARCHAR(255) NOT NULL,
-  `adresse_compl` VARCHAR(255) NULL,
-  `commande_id` INT UNSIGNED NOT NULL,
-  `acteur_id` INT UNSIGNED NOT NULL,
-  UNIQUE INDEX `id_adresse_UNIQUE` (`id` ASC) VISIBLE,
-  PRIMARY KEY (`id`),
-  INDEX `fk_adresse_commande1_idx` (`commande_id` ASC) VISIBLE,
-  INDEX `fk_adresse_acteur1_idx` (`acteur_id` ASC) VISIBLE,
-  CONSTRAINT `fk_adresse_commande1`
-    FOREIGN KEY (`commande_id`)
-    REFERENCES `Oc_Pizza_db`.`commande` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_adresse_acteur1`
-    FOREIGN KEY (`acteur_id`)
-    REFERENCES `Oc_Pizza_db`.`acteur` (`id`)
+  CONSTRAINT `fk_Employee_Actors1`
+    FOREIGN KEY (`id`)
+    REFERENCES `Oc_Pizza`.`Actors` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`employe`
+-- Table `Oc_Pizza`.`payments`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`employe` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`payments` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `num_ss_employe` VARCHAR(30) NOT NULL,
-  `qualite` VARCHAR(155) NOT NULL,
-  `date_entree` DATE NOT NULL,
-  `restaurant_id` INT NOT NULL,
-  `statut_id` INT UNSIGNED NOT NULL,
-  `acteur_id` INT UNSIGNED NOT NULL,
-  UNIQUE INDEX `num_ss_UNIQUE` (`num_ss_employe` ASC) VISIBLE,
-  INDEX `fk_employe_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
-  INDEX `fk_employe_statut1_idx` (`statut_id` ASC) VISIBLE,
-  INDEX `fk_employe_acteur1_idx` (`acteur_id` ASC) VISIBLE,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_employe_restaurant1`
-    FOREIGN KEY (`restaurant_id`)
-    REFERENCES `Oc_Pizza_db`.`restaurant` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_employe_statut1`
-    FOREIGN KEY (`statut_id`)
-    REFERENCES `Oc_Pizza_db`.`statut` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_employe_acteur1`
-    FOREIGN KEY (`acteur_id`)
-    REFERENCES `Oc_Pizza_db`.`acteur` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`paiement`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`paiement` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `mode` VARCHAR(80) NOT NULL,
-  UNIQUE INDEX `id_paiement_UNIQUE` (`id` ASC) VISIBLE,
+  `payment_mode` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`facture`
+-- Table `Oc_Pizza`.`Orders`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`facture` (
-  `id` INT UNSIGNED NOT NULL,
-  `date_facture` DATE NOT NULL,
-  `type_produit` VARCHAR(255) NOT NULL,
-  `prix` VARCHAR(45) NOT NULL,
-  `tva` REAL NOT NULL,
-  `paiement_id` INT NOT NULL,
-  `acteur_id` INT UNSIGNED NOT NULL,
-  `adresse_id` INT NOT NULL,
-  `telephone_id` VARCHAR(12) NOT NULL,
-  INDEX `fk_facture_paiement1_idx` (`paiement_id` ASC) VISIBLE,
-  INDEX `fk_facture_acteur1_idx` (`acteur_id` ASC) VISIBLE,
-  INDEX `fk_facture_adresse1_idx` (`adresse_id` ASC) VISIBLE,
-  INDEX `fk_facture_telephone1_idx` (`telephone_id` ASC) VISIBLE,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_facture_paiement1`
-    FOREIGN KEY (`paiement_id`)
-    REFERENCES `Oc_Pizza_db`.`paiement` (`id`)
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Orders` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `product_type` VARCHAR(255) NOT NULL,
+  `order_date` DATE NOT NULL,
+  `Status_id` INT NOT NULL,
+  `Status_id1` INT NOT NULL,
+  `Actors_id` INT NOT NULL,
+  `Restaurants_id` INT NOT NULL,
+  `Addresses_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Orders_Status1_idx` (`Status_id` ASC) VISIBLE,
+  INDEX `fk_Orders_Status2_idx` (`Status_id1` ASC) VISIBLE,
+  INDEX `fk_Orders_Actors1_idx` (`Actors_id` ASC) VISIBLE,
+  INDEX `fk_Orders_Restaurants1_idx` (`Restaurants_id` ASC) VISIBLE,
+  INDEX `fk_Orders_Addresses1_idx` (`Addresses_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Orders_Status1`
+    FOREIGN KEY (`Status_id`)
+    REFERENCES `Oc_Pizza`.`Status` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_facture_acteur1`
-    FOREIGN KEY (`acteur_id`)
-    REFERENCES `Oc_Pizza_db`.`acteur` (`id`)
+  CONSTRAINT `fk_Orders_Status2`
+    FOREIGN KEY (`Status_id1`)
+    REFERENCES `Oc_Pizza`.`Status` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_facture_adresse1`
-    FOREIGN KEY (`adresse_id`)
-    REFERENCES `Oc_Pizza_db`.`adresse` (`id`)
+  CONSTRAINT `fk_Orders_Actors1`
+    FOREIGN KEY (`Actors_id`)
+    REFERENCES `Oc_Pizza`.`Actors` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_facture_telephone1`
-    FOREIGN KEY (`telephone_id`)
-    REFERENCES `Oc_Pizza_db`.`telephone` (`id`)
+  CONSTRAINT `fk_Orders_Restaurants1`
+    FOREIGN KEY (`Restaurants_id`)
+    REFERENCES `Oc_Pizza`.`Restaurants` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_commande_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `Oc_Pizza_db`.`commande` (`id`)
+  CONSTRAINT `fk_Orders_Addresses1`
+    FOREIGN KEY (`Addresses_id`)
+    REFERENCES `Oc_Pizza`.`Addresses` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`ingredient`
+-- Table `Oc_Pizza`.`Invoices`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`ingredient` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Invoices` (
+  `id` INT NOT NULL,
+  `invoices_date` DATE NOT NULL,
+  `product_type` VARCHAR(155) NOT NULL,
+  `product_price` DECIMAL(5,2) NOT NULL,
+  `product_taxe` DECIMAL(5,2) NOT NULL,
+  `payments_id` INT NOT NULL,
+  `Addresses_id` INT NOT NULL,
+  `Phones_id` INT NOT NULL,
+  `Actors_id` INT NOT NULL,
+  `Orders_id` INT NOT NULL,
+  INDEX `fk_Invoices_payments1_idx` (`id` ASC) VISIBLE,
+  INDEX `fk_Invoices_Addresses1_idx` (`Addresses_id` ASC) VISIBLE,
+  INDEX `fk_Invoices_Phones1_idx` (`Phones_id` ASC) VISIBLE,
+  INDEX `fk_Invoices_Actors1_idx` (`Actors_id` ASC) VISIBLE,
+  PRIMARY KEY (`Orders_id`),
+  CONSTRAINT `fk_Invoices_payments1`
+    FOREIGN KEY (`id`)
+    REFERENCES `Oc_Pizza`.`payments` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Invoices_Addresses1`
+    FOREIGN KEY (`Addresses_id`)
+    REFERENCES `Oc_Pizza`.`Addresses` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Invoices_Phones1`
+    FOREIGN KEY (`Phones_id`)
+    REFERENCES `Oc_Pizza`.`Phones` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Invoices_Actors1`
+    FOREIGN KEY (`Actors_id`)
+    REFERENCES `Oc_Pizza`.`Actors` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Invoices_Orders1`
+    FOREIGN KEY (`Orders_id`)
+    REFERENCES `Oc_Pizza`.`Orders` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Oc_Pizza`.`Ingredients`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Ingredients` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `designation` VARCHAR(255) NOT NULL,
-  `poids` DECIMAL(5) NOT NULL,
-  UNIQUE INDEX `id_paiement_UNIQUE` (`id` ASC) VISIBLE,
+  `weight` DECIMAL(5,2) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`typeProduit`
+-- Table `Oc_Pizza`.`ProductTypes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`typeProduit` (
-  `id` INT NOT NULL,
-  `type_produit` VARCHAR(255) NOT NULL,
-  UNIQUE INDEX `id_paiement_UNIQUE` (`id` ASC) VISIBLE,
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`ProductTypes` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `product_type` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`produit`
+-- Table `Oc_Pizza`.`Products`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`produit` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nom` VARCHAR(155) NOT NULL,
-  `prix` DECIMAL(5) NOT NULL,
-  `typeProduit_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_produit_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `fk_produit_typeProduit1_idx` (`typeProduit_id` ASC) VISIBLE,
-  CONSTRAINT `fk_produit_typeProduit1`
-    FOREIGN KEY (`typeProduit_id`)
-    REFERENCES `Oc_Pizza_db`.`typeProduit` (`id`)
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Products` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `product_name` VARCHAR(155) NOT NULL,
+  `product_price` DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Oc_Pizza`.`Shopping_Cart`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Shopping_Cart` (
+  `Orders_id` INT NOT NULL,
+  `Products_id` INT NOT NULL,
+  `article` VARCHAR(255) NOT NULL,
+  `quantity` INT NOT NULL,
+  `price` DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (`Orders_id`, `Products_id`),
+  INDEX `fk_Orders_has_Products_Products1_idx` (`Products_id` ASC) VISIBLE,
+  INDEX `fk_Orders_has_Products_Orders1_idx` (`Orders_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Orders_has_Products_Orders1`
+    FOREIGN KEY (`Orders_id`)
+    REFERENCES `Oc_Pizza`.`Orders` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Orders_has_Products_Products1`
+    FOREIGN KEY (`Products_id`)
+    REFERENCES `Oc_Pizza`.`Products` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`composition`
+-- Table `Oc_Pizza`.`Product_Stock`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`composition` (
-  `ingredient_id` INT NOT NULL,
-  `produit_id` INT UNSIGNED NOT NULL,
-  `quantite` DECIMAL(5,2) NOT NULL,
-  PRIMARY KEY (`ingredient_id`, `produit_id`),
-  INDEX `fk_ingredient_has_produit_produit1_idx` (`produit_id` ASC) VISIBLE,
-  INDEX `fk_ingredient_has_produit_ingredient1_idx` (`ingredient_id` ASC) VISIBLE,
-  CONSTRAINT `fk_ingredient_has_produit_ingredient1`
-    FOREIGN KEY (`ingredient_id`)
-    REFERENCES `Oc_Pizza_db`.`ingredient` (`id`)
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Product_Stock` (
+  `Ingredients_id` INT NOT NULL,
+  `Restaurants_id` INT NOT NULL,
+  `name_product` VARCHAR(155) NOT NULL,
+  `weight` DECIMAL(5,2) NOT NULL,
+  `conditioning` VARCHAR(255) NOT NULL,
+  `quantity` DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (`Ingredients_id`, `Restaurants_id`),
+  INDEX `fk_Ingredients_has_Restaurants_Restaurants1_idx` (`Restaurants_id` ASC) VISIBLE,
+  INDEX `fk_Ingredients_has_Restaurants_Ingredients1_idx` (`Ingredients_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Ingredients_has_Restaurants_Ingredients1`
+    FOREIGN KEY (`Ingredients_id`)
+    REFERENCES `Oc_Pizza`.`Ingredients` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_ingredient_has_produit_produit1`
-    FOREIGN KEY (`produit_id`)
-    REFERENCES `Oc_Pizza_db`.`produit` (`id`)
+  CONSTRAINT `fk_Ingredients_has_Restaurants_Restaurants1`
+    FOREIGN KEY (`Restaurants_id`)
+    REFERENCES `Oc_Pizza`.`Restaurants` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`stockProduit`
+-- Table `Oc_Pizza`.`Composition`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`stockProduit` (
-  `ingredient_id` INT NOT NULL,
-  `restaurant_id` INT NOT NULL,
-  `nom` VARCHAR(255) NOT NULL,
-  `poids` DECIMAL(5,2) NOT NULL,
-  `conditionnement` VARCHAR(155) NULL,
-  `quantite` INT NOT NULL,
-  PRIMARY KEY (`ingredient_id`, `restaurant_id`),
-  INDEX `fk_ingredient_has_restaurant_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
-  INDEX `fk_ingredient_has_restaurant_ingredient1_idx` (`ingredient_id` ASC) VISIBLE,
-  CONSTRAINT `fk_ingredient_has_restaurant_ingredient1`
-    FOREIGN KEY (`ingredient_id`)
-    REFERENCES `Oc_Pizza_db`.`ingredient` (`id`)
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Composition` (
+  `Ingredients_id` INT NOT NULL,
+  `Products_id` INT NOT NULL,
+  `quantity` DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (`Ingredients_id`, `Products_id`),
+  INDEX `fk_Ingredients_has_Products_Products1_idx` (`Products_id` ASC) VISIBLE,
+  INDEX `fk_Ingredients_has_Products_Ingredients1_idx` (`Ingredients_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Ingredients_has_Products_Ingredients1`
+    FOREIGN KEY (`Ingredients_id`)
+    REFERENCES `Oc_Pizza`.`Ingredients` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_ingredient_has_restaurant_restaurant1`
-    FOREIGN KEY (`restaurant_id`)
-    REFERENCES `Oc_Pizza_db`.`restaurant` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Oc_Pizza_db`.`pannier`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza_db`.`pannier` (
-  `typeProduit_id` INT NOT NULL,
-  `commande_id` INT UNSIGNED NOT NULL,
-  `article` VARCHAR(155) NOT NULL,
-  `quantite` INT NOT NULL,
-  `prix` DECIMAL(5,2) NOT NULL,
-  PRIMARY KEY (`typeProduit_id`, `commande_id`),
-  INDEX `fk_typeProduit_has_commande_commande1_idx` (`commande_id` ASC) VISIBLE,
-  INDEX `fk_typeProduit_has_commande_typeProduit1_idx` (`typeProduit_id` ASC) VISIBLE,
-  CONSTRAINT `fk_typeProduit_has_commande_typeProduit1`
-    FOREIGN KEY (`typeProduit_id`)
-    REFERENCES `Oc_Pizza_db`.`typeProduit` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_typeProduit_has_commande_commande1`
-    FOREIGN KEY (`commande_id`)
-    REFERENCES `Oc_Pizza_db`.`commande` (`id`)
+  CONSTRAINT `fk_Ingredients_has_Products_Products1`
+    FOREIGN KEY (`Products_id`)
+    REFERENCES `Oc_Pizza`.`Products` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;

@@ -1,10 +1,10 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
+from Python.config import CATEGORIES, ROYALE_PIZZA
 
 import requests as req
 from pprint import pprint
-
 
 class ApiCollectingData:
     """
@@ -17,65 +17,98 @@ class ApiCollectingData:
         """ The constructor is not used here """
         pass
 
-    def connect_and_harvest(self):
+    def connect_and_dowload_per_category(self):
         """ Use the configuration for the connecting interface """
-        all_products = []
+        product_categories = []
         # Address OpenFooFact.org the API FR locating
         api = "https://fr.openfoodfacts.org/cgi/search.pl"
-        for category in self.CATEGORIES:
+        for category in CATEGORIES:
             # This config for  for connecting API
             config = {"action": "process",
-                      # Get the result by category
                       "tagtype_0": "categories",
-                      # the tag represents the article search
                       'tag_0': category,
                       "tag_contains_0": "contains",
-                      # Number of articles per page
-                      # Min content 20, Max content 1000
                       "page_size": 5,
-                      # The API response in JSON
                       "json": 1}
-            # Uses the configuration for the connection
             response = req.get(api, params=config)
-            # Return the response in JSON
             results = response.json()
-            # Finally result of API
             products_section = results['products']
             for product in products_section:
                 product['main_category'] = category
-            all_products.extend(products_section)
-        return all_products
+                product_categories.extend(products_section)
+            # pprint(product_categories)
+        return product_categories
 
     def format_final_response(self, all_products):
         """ Formatted the response just harvest the categories selected """
         product_final = []
-        keys = ['id', 'product_name_fr', 'nutrition_grade_fr',
-                'url', 'categories', 'main_category', 'stores']
-        print(len(all_products))
+        keys = ['id',
+                'product_name_fr',
+                'main_category',
+                'generic_name_fr']
         for product in all_products:
             if self.validate_the_data(keys, product):
-                barcode = product['id']
-                name = product['product_name_fr']
-                sub_category = product['main_category'].upper()
-                designation = product['generic_name_fr']
-                poids = product['quantity']
-                key = (barcode, name, sub_category, poids)
+                barcode = self.barcode(product)
+                name = self.name(product)
+                sub_category = self.sub_category(product)
+                designation = self.designation(product)
+                key = (barcode, name, sub_category, designation)
                 formatting = key
                 product_final.append(formatting)
-                ###############################
-                """ PRINT RESULTS FUNCTION """
-                ###############################
-                # Print type results the stores and category count
-                print(' produit: ', name.upper(), '\n',
-                      ' id_produit: ', int(barcode),
-                      ' designation: ', designation.upper(),
-                      ' poids: ', poids,
-                      'présent dans: ', [sub_category], [len(sub_category)],
+                print('id_produit :', int(barcode),'\n',
+                      'produit :', name.upper(), '\n',
+                      'présent dans :', sub_category, '\n',
+                      'designation :', designation.upper(), '\n',
                       f"Nous avons récupéré {len(product_final)} produits", '\n'*2)
-                # Print type results final form
-                pprint(product_final)
-                ###############################
         return product_final
+
+    def connect_and_dowload_per_barcode(self):
+        """ Use the configuration for the connecting interface """
+        product_barcode = []
+        for barcode in ROYALE_PIZZA:
+            bar_code = f"https://fr.openfoodfacts.org/api/v0/produit/{barcode}"
+            config = {'tag_0': barcode}
+            response = req.get(bar_code, params=config)
+            products_section = response.json()
+            products_barcode = products_section['product']
+            barcode = self.barcode(products_barcode)
+            name = self.name(products_barcode)
+            categories = self.category_barcode(products_barcode)
+            designation = self.designation(products_barcode)
+            weight = self.weight(products_barcode)
+            key_barcode = (barcode, name.upper(), designation, categories.upper() , weight)
+            formatting = key_barcode
+            product_barcode.append(formatting)
+            print('id_produit :', int(barcode), '\n',
+                  'produit :', name.upper(), '\n',
+                  'présent dans :', categories, '\n',
+                  'designation :', designation.upper(), '\n',
+                  f"Nous avons récupéré {len(product_barcode)} produits", '\n' * 2)
+        return product_barcode
+
+    def barcode(self, attribute):
+        barcode = attribute['id']
+        return barcode
+
+    def name(self, attribute):
+        name = attribute['product_name_fr']
+        return name
+
+    def sub_category(self, attribute):
+        sub_category = attribute['main_category']
+        return sub_category
+
+    def category_barcode(self, attribute):
+        sub_category = attribute['categories']
+        return sub_category
+
+    def designation(self, attribute):
+        designation = attribute['generic_name_fr']
+        return designation
+
+    def weight(self, attribute):
+        weight = attribute['quantity']
+        return weight
 
     def validate_the_data(self, keys, products_section):
         """ Validate the complete fields """
@@ -84,13 +117,19 @@ class ApiCollectingData:
                 return False
         return True
 
-
 def main():
     """ Initialize the data collect """
 
     downloader = ApiCollectingData()
-    connect = downloader.connect_and_harvest()
-    downloader.format_final_response(connect)
+
+    step_category = downloader.connect_and_dowload_per_category()
+    downloader.format_final_response(step_category)
+
+    step_barcode = downloader.connect_and_dowload_per_barcode()
+    downloader.format_final_response(step_barcode)
+
 
 if __name__ == "__main__":
     main()
+
+

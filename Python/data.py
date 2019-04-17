@@ -39,7 +39,7 @@ class FakeCollectingData:
         prefix = "+3356",  "+0176", "+0450"
         form = sample(prefix, 1)
         number = self.number_random(1, 999999)
-        telephone = form.append(number)
+        telephone = str(form) + number
         return telephone
 
     def adresse(self):
