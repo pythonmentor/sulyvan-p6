@@ -35,32 +35,7 @@ class ApiCollectingData:
             products_section = results['products']
             for product in products_section:
                 product['main_category'] = category
-                product_categories.extend(products_section)
-            # pprint(product_categories)
-        return product_categories
-
-    def format_final_response(self, all_products):
-        """ Formatted the response just harvest the categories selected """
-        product_final = []
-        keys = ['id',
-                'product_name_fr',
-                'main_category',
-                'generic_name_fr']
-        for product in all_products:
-            if self.validate_the_data(keys, product):
-                barcode = self.barcode(product)
-                name = self.name(product)
-                sub_category = self.sub_category(product)
-                designation = self.designation(product)
-                key = (barcode, name, sub_category, designation)
-                formatting = key
-                product_final.append(formatting)
-                print('id_produit :', int(barcode),'\n',
-                      'produit :', name.upper(), '\n',
-                      'présent dans :', sub_category, '\n',
-                      'designation :', designation.upper(), '\n',
-                      f"Nous avons récupéré {len(product_final)} produits", '\n'*2)
-        return product_final
+                return product
 
     def connect_and_dowload_per_barcode(self):
         """ Use the configuration for the connecting interface """
@@ -71,20 +46,7 @@ class ApiCollectingData:
             response = req.get(bar_code, params=config)
             products_section = response.json()
             products_barcode = products_section['product']
-            barcode = self.barcode(products_barcode)
-            name = self.name(products_barcode)
-            categories = self.category_barcode(products_barcode)
-            designation = self.designation(products_barcode)
-            weight = self.weight(products_barcode)
-            key_barcode = (barcode, name.upper(), designation, categories.upper() , weight)
-            formatting = key_barcode
-            product_barcode.append(formatting)
-            print('id_produit :', int(barcode), '\n',
-                  'produit :', name.upper(), '\n',
-                  'présent dans :', categories, '\n',
-                  'designation :', designation.upper(), '\n',
-                  f"Nous avons récupéré {len(product_barcode)} produits", '\n' * 2)
-        return product_barcode
+            return products_barcode
 
     def barcode(self, attribute):
         barcode = attribute['id']
@@ -117,17 +79,40 @@ class ApiCollectingData:
                 return False
         return True
 
+    def generate_data(self):
+        product_ctagorie = self.connect_and_dowload_per_category()
+        product_barcode = self.connect_and_dowload_per_barcode()
+
+        id = self.barcode(product_barcode)
+        name = self.name(product_barcode)
+        category = self.category_barcode(product_barcode)
+        deisgnation = self.designation(product_barcode)
+        weight = self.weight(product_barcode)
+        key_barcode = (id, name, category, deisgnation, weight)
+
+        key_category = (id, name, category, deisgnation)
+        if self.validate_the_data(key_category, product_ctagorie):
+            id = self.barcode(product_ctagorie)
+            name = self.name(product_ctagorie)
+            category = self.sub_category(product_ctagorie)
+            deisgnation = self.designation(product_ctagorie)
+            key_category = (id, name, category, deisgnation)
+        print('\n',
+                  key_barcode, '\n',
+                  key_category)
+        return key_barcode, key_category
+
 def main():
     """ Initialize the data collect """
 
     downloader = ApiCollectingData()
 
-    step_category = downloader.connect_and_dowload_per_category()
-    downloader.format_final_response(step_category)
+    # step_category = downloader.connect_and_dowload_per_category()
+    # downloader.format_final_response(step_category)
 
-    step_barcode = downloader.connect_and_dowload_per_barcode()
-    downloader.format_final_response(step_barcode)
-
+    # downloader.connect_and_dowload_per_barcode()
+    # downloader.connect_and_dowload_per_category()
+    downloader.generate_data()
 
 if __name__ == "__main__":
     main()
