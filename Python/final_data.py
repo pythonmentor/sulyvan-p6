@@ -2,156 +2,165 @@
 # -*- coding: Utf-8 -*-
 
 
-from Python.data import FakeCollectingData
-from Python.data_api import ApiCollectingData as Api
+from dataclasses import dataclass
 
-from random import randint, sample
+"""Voici les dataclass qui correspond parfaitement au modéle physique de donnèes
+   est-il possible de faire une class "Entity" pour les dataclass?"""
+
+"""Informations entity"""
+@dataclass
+class Emails:
+    mail: str
+    # Id is AUTO_INCREMENT
+    id: int = None
+
+@dataclass
+class Phones:
+    phone: str
+    # Id is AUTO_INCREMENT
+    id: int = None
+
+@dataclass
+class Adresses:
+    address: str
+    zip_code: str
+    city: str
+    additional_address : str
+    # Id is AUTO_INCREMENT
+    id: int = None
 
 
-class  DataDowloader:
+"""Actors entity"""
+@dataclass
+class Actors:
+    first_name: str
+    last_name: str
+    authentication_password: str
+    # Foreign key attribute
+    Emails_id: Emails
+    Phones_id: Phones
+    Adresses_id: Adresses
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    def __init__(self):
-        self.fake = FakeCollectingData()
-        api = Api()
 
-    def restaurant(self):
-        list_name = ('Oc Pizza Lyon',
-                     'Oc Pizza Paris',
-                     'Oc Pizza Marseille',
-                     'Oc Pizza Genéve')
-        # id = (autoIncrement)
-        restaurant_name =sample(list_name, 1)
-        key = restaurant_name
-        return key
+"""Restaurants entity"""
+@dataclass
+class Statuses:
+    status: str
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    def status(self):
-        list_status = ('En court de préparation',
-                       'Commande terminé',
-                       'Commande en cours de livraison',
-                       'Commande livré')
-        id =self.fake.number_random(1, 9999)
-        status = sample(list_status, 1)
-        key = id, status
-        return key
+@dataclass
+class Restaurants:
+    restaurant_name: str
+    # Foreign key attribute
+    Addresses_id: Adresses
+    Phones_id: Phones
+    Mails_id: Emails
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    def order(self):
-        # id = (autoIncrement)
-        product_type = ()
-        date_order = ()
-        key = product_type, date_order
-        return key
+@dataclass
+class Employees:
+    social_security_numb: str
+    quality: str
+    date_entry: str
+    # Foreign key attribute
+    Status_id: Statuses
+    Restaurants_id: Restaurants
 
-    def bill(self):
-        #id =(FK)
-        date =self.fake.fake_date()
-        product_type =()
-        price = self.fake.number_random(1, 99)
-        taxe_rate =()
-        key = date, product_type, price, taxe_rate
-        return key
+    Actors_id: Actors
+    # Lid des employes est une FK qui pointe ver l'Id des acteurs, donc == à "Actors_id"?
+    id: int = Actors_id
 
-    def payment(self):
-        list_paiement = ('Espece',
-                         'Carte bancaire',
-                         'Cheque bancaire',
-                         'Tiket restaurant')
-        # id = (autoIncrement)
-        mode = sample(list_paiement, 1)
-        return mode
 
-    def mail(self):
-        # id = (autoIncrement)
-        mail = self.fake.fake_mail()
-        return mail
+"""Billing entity"""
+@dataclass
+class Payments:
+    payment_mode: str
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    def phone(self):
-        id = (self.fake.number_random(1, 999))
-        phone = self.fake.fake_telephone()
-        key = id, phone
-        return id, key
+@dataclass
+class Orders:
+    product_type: str
+    order_date: str
+    # Foreign key attribute
+    Status_id: Statuses
+    Actors_id: Actors
+    Restaurants_id: Restaurants
+    Adresses_id: Adresses
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    def adress(self):
-        # id = (autoIncrement)
-        adress = (self.fake.adresse())
-        zip =(self.fake.adresse_zip())
-        country =(self.fake.adresse_country())
-        complement = (self.fake.adresse_complement())
+@dataclass
+class Invoices:
+    invoices_date: str
+    product_type: str
+    product_price: float
+    product_taxe: float
 
-        key = adress, zip, country, complement
-        return key
+    payments_id: int # J'ai un doute sur cet attribut, qui n'est pas une clef ni clef etrangere ni id en auto increment
 
-    def ingredient(self):
-        # id = (autoIncrement)
-        designation = ()
-        weight = ()
-        return None
+    # Foreign key attribute
+    Adresses_id: Adresses
+    Phones_id: Phones
+    Actors_id: Actors
+    Orders_id: Orders
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    def type_product(self):
-        id = (self.fake.number_random(1, 999))
-        product_type = ()
-        return None
 
-    def product(self):
-        # id = (autoIncrement)
-        name = ()
-        price = ()
-        return None
+"""Stock entity"""
+@dataclass
+class Ingredients:
+    designation: str
+    weight: float
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    # Associate table
+@dataclass
+class ProductTypes:
+    product_type: str
+    # Id is AUTO_INCREMENT
+    id: int = None
 
-    def stock_product(self):
-        name = ()
-        weight = ()
-        conditioning = ()
-        quantity = ()
-        return None
+@dataclass
+class Products:
+    product_name: str
+    product_price: float
+    # Id is not AUTO_INCREMENT
+    id: int = int
 
-    def composition(self):
-        quantity = ()
-        return None
 
-    def basket(self):
-        # id = (autoIncrement)
-        name = ()
-        price = ()
-        return None
+"""Associate stock entity"""
+@dataclass
+class Product_Stock:
+    # Foreign key attribute
+    Ingredients_id: Ingredients
+    Restaurants_id: Restaurants
+    # Attribute
+    name_product: str
+    weight: float
+    conditioning: str
+    quantity: float
 
-    def generate_data(self):
-        list_qualite = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
-        for g in range(10):
-            name = self.fake.first_name()
-            last_name = self.fake.last_name()
-            password = self.fake.random_password()
-            adress = self.fake.adresse()
-            zip = self.fake.adresse_zip()
-            country = self.fake.adresse_country()
-            complement = self.fake.adresse_complement()
-            num_ss_employe = self.fake.number_random(1, 99999999999999)
-            quality = sample(list_qualite, 1)
-            date = self.fake.fake_date()
-            status = self.status()
-            mail = self.fake.fake_mail()
-            id = self.fake.number_random(1, 999)
-            phone = self.fake.fake_telephone()
-            restaurant = self.fake.restaurant()
-            key = (name, last_name, password,               # Actor_table
-                   num_ss_employe, quality, date,           # Employe_table
-                   id, status,                              # Status_table
-                   adress, zip, country, complement,        # Adresse_table
-                   mail,                                    # Mail_table
-                   id, phone,                               # Phone_table
-                   restaurant)                              # Restaurant_table
-            return key
+@dataclass
+class Compositions:
+    # Foreign key attribute
+    Ingredients_id: Ingredients
+    Products_id: Products
+    # Attribute
+    quantity: float
 
-def main():
-    """ Initialize the data collect """
+@dataclass
+class Shopping_Cart:
+    # Foreign key attribute
+    Orders_id: Orders
+    Products_id: Products
+    # Attribute
+    article: str
+    quantity: int
+    price: float
 
-    fake = DataDowloader()
-    fake.generate_data()
-
-    # api = ApiCollectingData()
-
-    # join the data in the class
-
-if __name__ == "__main__":
-    main()

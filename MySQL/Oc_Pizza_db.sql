@@ -11,13 +11,13 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema Oc_Pizza
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `Oc_Pizza` DEFAULT CHARACTER SET utf8mb4 ; 
+CREATE SCHEMA IF NOT EXISTS `Oc_Pizza` DEFAULT CHARACTER SET utf8mb4 ;
 USE `Oc_Pizza` ;
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza`.`Status`
+-- Table `Oc_Pizza`.`Statuses`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Status` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Statuses` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `status` VARCHAR(155) NOT NULL,
   PRIMARY KEY (`id`))
@@ -126,24 +126,24 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza`.`Employee`
+-- Table `Oc_Pizza`.`employees`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Employee` (
-  `id` INT NULL,
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`employees` (
+  `id` INT NOT NULL,
   `social_security_numb` VARCHAR(30) NOT NULL,
   `quality` VARCHAR(100) NOT NULL,
-  `datef_entry` DATE NOT NULL,
+  `date_entry` DATE NOT NULL,
   `Status_id` INT NOT NULL,
   `Restaurants_id` INT NOT NULL,
   `Actors_id` INT NOT NULL,
   UNIQUE INDEX `social_security_numb_UNIQUE` (`social_security_numb` ASC) VISIBLE,
   INDEX `fk_Employee_Status_idx` (`Status_id` ASC) VISIBLE,
   INDEX `fk_Employee_Restaurants1_idx` (`Restaurants_id` ASC) VISIBLE,
-  PRIMARY KEY (`Actors_id`),
+  PRIMARY KEY (`Actors_id`, `id`),
   INDEX `fk_Employee_Actors1_idx` (`id` ASC) VISIBLE,
   CONSTRAINT `fk_Employee_Status`
     FOREIGN KEY (`Status_id`)
-    REFERENCES `Oc_Pizza`.`Status` (`id`)
+    REFERENCES `Oc_Pizza`.`Statuses` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_Employee_Restaurants1`
@@ -177,24 +177,17 @@ CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Orders` (
   `product_type` VARCHAR(255) NOT NULL,
   `order_date` DATE NOT NULL,
   `Status_id` INT NOT NULL,
-  `Status_id1` INT NOT NULL,
   `Actors_id` INT NOT NULL,
   `Restaurants_id` INT NOT NULL,
   `Addresses_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Orders_Status1_idx` (`Status_id` ASC) VISIBLE,
-  INDEX `fk_Orders_Status2_idx` (`Status_id1` ASC) VISIBLE,
   INDEX `fk_Orders_Actors1_idx` (`Actors_id` ASC) VISIBLE,
   INDEX `fk_Orders_Restaurants1_idx` (`Restaurants_id` ASC) VISIBLE,
   INDEX `fk_Orders_Addresses1_idx` (`Addresses_id` ASC) VISIBLE,
   CONSTRAINT `fk_Orders_Status1`
     FOREIGN KEY (`Status_id`)
-    REFERENCES `Oc_Pizza`.`Status` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_Orders_Status2`
-    FOREIGN KEY (`Status_id1`)
-    REFERENCES `Oc_Pizza`.`Status` (`id`)
+    REFERENCES `Oc_Pizza`.`Statuses` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_Orders_Actors1`
@@ -219,7 +212,7 @@ ENGINE = InnoDB;
 -- Table `Oc_Pizza`.`Invoices`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Invoices` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `invoices_date` DATE NOT NULL,
   `product_type` VARCHAR(155) NOT NULL,
   `product_price` DECIMAL(5,2) NOT NULL,
@@ -233,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Invoices` (
   INDEX `fk_Invoices_Addresses1_idx` (`Addresses_id` ASC) VISIBLE,
   INDEX `fk_Invoices_Phones1_idx` (`Phones_id` ASC) VISIBLE,
   INDEX `fk_Invoices_Actors1_idx` (`Actors_id` ASC) VISIBLE,
-  PRIMARY KEY (`Orders_id`),
+  PRIMARY KEY (`id`, `Orders_id`),
   CONSTRAINT `fk_Invoices_payments1`
     FOREIGN KEY (`id`)
     REFERENCES `Oc_Pizza`.`payments` (`id`)
@@ -287,7 +280,7 @@ ENGINE = InnoDB;
 -- Table `Oc_Pizza`.`Products`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Products` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` BIGINT NOT NULL,
   `product_name` VARCHAR(155) NOT NULL,
   `product_price` DECIMAL(5,2) NOT NULL,
   PRIMARY KEY (`id`))
@@ -299,7 +292,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Shopping_Cart` (
   `Orders_id` INT NOT NULL,
-  `Products_id` INT NOT NULL,
+  `Products_id` BIGINT NOT NULL,
   `article` VARCHAR(255) NOT NULL,
   `quantity` INT NOT NULL,
   `price` DECIMAL(5,2) NOT NULL,
@@ -346,11 +339,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza`.`Composition`
+-- Table `Oc_Pizza`.`compositions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Composition` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`compositions` (
   `Ingredients_id` INT NOT NULL,
-  `Products_id` INT NOT NULL,
+  `Products_id` BIGINT NOT NULL,
   `quantity` DECIMAL(5,2) NOT NULL,
   PRIMARY KEY (`Ingredients_id`, `Products_id`),
   INDEX `fk_Ingredients_has_Products_Products1_idx` (`Products_id` ASC) VISIBLE,

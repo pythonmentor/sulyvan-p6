@@ -76,7 +76,7 @@ class FakeCollectingData:
                      'Oc Pizza Marseille',
                      'Oc Pizza Genéve')
         restaurant_name =sample(list_name, 1)
-        key = tuple(restaurant_name)
+        key = restaurant_name
         return key
 
 # Status attribute section:
