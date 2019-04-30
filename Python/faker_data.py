@@ -1,6 +1,7 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
+
 from faker import Faker
 from random import randint, sample
 
@@ -29,15 +30,15 @@ class FakeCollectingData:
         city = fake.city()
         return city
 
-    def fake_complement(self):
+    def fake_complement(self, number=1):
         random_num = str(self.number_random(1, 99))
         complement_list = ('',
                           'apartment ' + random_num,
                           'Floor ' + random_num,
                           'Bell ' + random_num,
                            '')
-        complement = sample(complement_list, 1)
-        return tuple(complement)
+        complement = sample(complement_list, number if number else len(complement_list))
+        return [{complement: data} for data in complement]
 
 # Civility attribute section:
     def fake_first_name(self):
@@ -63,38 +64,35 @@ class FakeCollectingData:
 
 # Phone attribute section:
     def fake_telephone(self):
-        prefix = "+3356",  "+0176", "+0450"
+        prefix = "+3356",  "+0176", "+0450", "+0629"
         form = sample(prefix, 1)
         number = self.number_random(1, 999999)
-        telephone = str(form) + number
-        return telephone
+        form.append(number)
+        return "".join(form)
 
 # Restaurant attribute section:
-    def fake_restaurant(self):
-        list_name = ('Oc Pizza Lyon',
+    def fake_restaurant(self, number=1):
+        name_list = ('Oc Pizza Lyon',
                      'Oc Pizza Paris',
                      'Oc Pizza Marseille',
                      'Oc Pizza Genéve')
-        restaurant_name =sample(list_name, 1)
-        key = restaurant_name
-        return key
+        restaurant_name =sample(name_list, number if number else len(name_list) )
+        return [{restaurant_name: data} for data in restaurant_name]
 
 # Status attribute section:
-    def fake_status(self):
-        list_status = ('En court de préparation',
+    def fake_status(self, number=1):
+        status_list = ('En court de préparation',
                        'Commande terminé',
                        'Commande en cours de livraison',
                        'Commande livré')
-        id =self.number_random(1, 9999)
-        status = sample(list_status, 1)
-        key = id, status
-        return tuple(key)
+        status = sample(status_list, number if number else len(status_list))
+        return [{status: data} for data in status]
 
 # Employee attribute section:
-    def fake_quality(self):
-        list_qualite = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
-        quality = sample(list_qualite, 1)
-        return tuple(quality)
+    def fake_quality(self, number=1):
+        qualite_list = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
+        quality = sample(qualite_list, number if number else len(qualite_list) )
+        return [{quality: data} for data in quality]
 
     def fake_date(self):
         day = fake.day_of_month()
@@ -109,14 +107,14 @@ class FakeCollectingData:
         price = str(self.number_random(1, 99)) + '.' + str(self.number_random(1, 99) + "€")
         return price
 
-    def fake_payment(self):
-        list_paiement = ('Espece',
+    def fake_payment(self, number=1):
+        paiement_list = ('Espece',
                          'Carte bancaire',
                          'Cheque bancaire',
                          'Tiket restaurant')
         # id = (autoIncrement)
-        mode = sample(list_paiement, 1)
-        return tuple(mode)
+        mode = sample(paiement_list, number if number else len(paiement_list))
+        return [{mode: data} for data in mode]
 
     def number_random(self, count, count1):
         fake_number = randint(count, count1)

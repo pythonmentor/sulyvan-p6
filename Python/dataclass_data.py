@@ -4,10 +4,13 @@
 
 from dataclasses import dataclass
 
+
 """Voici les dataclass qui correspond parfaitement au modéle physique de donnèes
    est-il possible de faire une class "Entity" pour les dataclass?"""
 
 """Informations entity"""
+
+
 @dataclass
 class Emails:
     mail: str
@@ -31,6 +34,8 @@ class Adresses:
 
 
 """Actors entity"""
+
+
 @dataclass
 class Actors:
     first_name: str
@@ -45,6 +50,8 @@ class Actors:
 
 
 """Restaurants entity"""
+
+
 @dataclass
 class Statuses:
     status: str
@@ -71,11 +78,13 @@ class Employees:
     Restaurants_id: Restaurants
 
     Actors_id: Actors
-    # Lid des employes est une FK qui pointe ver l'Id des acteurs, donc == à "Actors_id"?
-    id: int = Actors_id
+    # L'id des employes est une FK qui pointe ver l'Id des acteurs, donc == à "Actors_id"?
+    id: int
 
 
 """Billing entity"""
+
+
 @dataclass
 class Payments:
     payment_mode: str
@@ -99,7 +108,7 @@ class Invoices:
     invoices_date: str
     product_type: str
     product_price: float
-    product_taxe: float
+    product_tax: float
 
     payments_id: int # J'ai un doute sur cet attribut, qui n'est pas une clef ni clef etrangere ni id en auto increment
 
@@ -113,6 +122,8 @@ class Invoices:
 
 
 """Stock entity"""
+
+
 @dataclass
 class Ingredients:
     designation: str
@@ -135,8 +146,10 @@ class Products:
 
 
 """Associate stock entity"""
+
+
 @dataclass
-class Product_Stock:
+class ProductStock:
     # Foreign key attribute
     Ingredients_id: Ingredients
     Restaurants_id: Restaurants
@@ -155,7 +168,7 @@ class Compositions:
     quantity: float
 
 @dataclass
-class Shopping_Cart:
+class ShoppingCart:
     # Foreign key attribute
     Orders_id: Orders
     Products_id: Products

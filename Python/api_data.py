@@ -1,10 +1,11 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
+
 from Python.config import CATEGORIES, ROYALE_PIZZA
 
 import requests as req
-from pprint import pprint
+
 
 class ApiCollectingData:
     """
@@ -52,21 +53,27 @@ class ApiCollectingData:
                 name = self.name(product)
                 sub_category = self.sub_category(product)
                 designation = self.designation(product)
-                key = (barcode, name, sub_category, designation)
+                key = (barcode,
+                       name,
+                       sub_category,
+                       designation)
                 formatting = key
                 product_final.append(formatting)
-                print('id_produit :', int(barcode),'\n',
+                print('id_produit :', int(barcode), '\n',
                       'produit :', name.upper(), '\n',
                       'présent dans :', sub_category, '\n',
                       'designation :', designation.upper(), '\n',
-                      f"Nous avons récupéré {len(product_final)} produits", '\n'*2)
+                      f"Nous avons récupéré "
+                      f"{len(product_final)} "
+                      f"produits", '\n'*2)
         return product_final
 
     def connect_and_dowload_per_barcode(self):
         """ Use the configuration for the connecting interface """
         product_barcode = []
         for barcode in ROYALE_PIZZA:
-            bar_code = f"https://fr.openfoodfacts.org/api/v0/produit/{barcode}"
+            bar_code = (f"https://fr.openfoodfacts.org/api/v0/produit/" 
+                        f"{barcode}")
             config = {'tag_0': barcode}
             response = req.get(bar_code, params=config)
             products_section = response.json()
@@ -76,7 +83,11 @@ class ApiCollectingData:
             categories = self.category_barcode(products_barcode)
             designation = self.designation(products_barcode)
             weight = self.weight(products_barcode)
-            key_barcode = (barcode, name.upper(), designation, categories.upper() , weight)
+            key_barcode = (barcode,
+                           name.upper(),
+                           designation,
+                           categories.upper(),
+                           weight)
             formatting = key_barcode
             product_barcode.append(formatting)
             print('id_produit :', int(barcode), '\n',
@@ -117,6 +128,7 @@ class ApiCollectingData:
                 return False
         return True
 
+
 def main():
     """ Initialize the data collect """
 
@@ -130,5 +142,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
