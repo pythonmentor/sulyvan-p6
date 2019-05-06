@@ -16,29 +16,36 @@ class FakeCollectingData:
         """ The constructor is not used here """
         pass
 
-# Adress attribute section:
-    def fake_adress(self):
+# Address attribute section:
+    def address(self):
         numb = self.number_random(1, 9999)
         street = fake.street_name()
         return numb, street
 
-    def fake_zip(self):
-        code_postal = self.number_random(1, 9999)
-        return code_postal
+    def postal_zip(self):
+        postal_zip = self.number_random(1, 9999)
+        return postal_zip
 
-    def fake_city(self):
+    def city(self):
         city = fake.city()
         return city
 
-    def fake_complement(self, number=1):
+    def complement_address(self):
         random_num = str(self.number_random(1, 99))
         complement_list = ('',
                           'apartment ' + random_num,
                           'Floor ' + random_num,
                           'Bell ' + random_num,
-                           '')
-        complement = sample(complement_list, number if number else len(complement_list))
-        return [{complement: data} for data in complement]
+                          '')
+        complement = sample(complement_list, 1)
+        return complement
+
+    def fake_address(self):
+        adress = self.address()
+        postal_zip = self.postal_zip()
+        city = self.city()
+        complement = self.complement_address()
+        return adress, postal_zip, city, complement
 
 # Civility attribute section:
     def fake_first_name(self):
@@ -50,8 +57,10 @@ class FakeCollectingData:
         return last_name
 
 # Password attribute section:
-    def fake__password(self):
-        char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/*.:?!"
+    def fake_password(self):
+        char = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ \
+                 abcdefghijklmnopqrstuvwxyz \
+                 0123456789/*.:?!")
         password = ""
         for i in range(10):
             password = password + char[randint(0, len(char) - 4)]
@@ -70,14 +79,13 @@ class FakeCollectingData:
         form.append(number)
         return "".join(form)
 
+
 # Restaurant attribute section:
     def fake_restaurant(self, number=1):
-        name_list = ('Oc Pizza Lyon',
-                     'Oc Pizza Paris',
-                     'Oc Pizza Marseille',
-                     'Oc Pizza Genéve')
-        restaurant_name =sample(name_list, number if number else len(name_list) )
-        return [{restaurant_name: data} for data in restaurant_name]
+        name_list = ('Oc Pizza Paris Xem',
+                     'Oc Pizza Paris XIIem')
+        restaurant_name = sample(name_list, number if number else len(name_list))
+        return [{'restaurant_name': data} for data in restaurant_name]
 
 # Status attribute section:
     def fake_status(self, number=1):
@@ -86,13 +94,41 @@ class FakeCollectingData:
                        'Commande en cours de livraison',
                        'Commande livré')
         status = sample(status_list, number if number else len(status_list))
-        return [{status: data} for data in status]
+        return [{'status': data} for data in status]
 
 # Employee attribute section:
     def fake_quality(self, number=1):
-        qualite_list = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
-        quality = sample(qualite_list, number if number else len(qualite_list) )
-        return [{quality: data} for data in quality]
+        quality_list = 'Gerant', 'Pizzaïolos','Hotesse', 'Livreur'
+        quality = sample(quality_list, number if number else len(quality_list))
+        return [{'quality': data} for data in quality]
+
+# Product type attribute section:
+    def fake_product_type(self, number=1):
+        product_type = ('Salade/Entrée',
+                        'Pizza',
+                        'Dessert',
+                        'Boissons',
+                        'Supplément')
+        type = sample(product_type, number if number else len(product_type))
+        return [{'product_type': data} for data in type]
+
+# Administrative attribute section:
+    def fake_price(self):
+        price = str(self.number_random(1, 99)) + '.' + str(self.number_random(1, 99) + "€")
+        return price
+
+    def fake_payment(self, number=1):
+        payment_list = ('Espece',
+                         'Carte bancaire',
+                         'Cheque bancaire',
+                         'Tiket restaurant')
+        # id = (autoIncrement)
+        mode = sample(payment_list, number if number else len(payment_list))
+        return [{'payment_mode': data} for data in mode]
+
+    def number_random(self, count, count1):
+        fake_number = randint(count, count1)
+        return str(fake_number)
 
     def fake_date(self):
         day = fake.day_of_month()
@@ -101,68 +137,14 @@ class FakeCollectingData:
         key = day, month, year
         return key
 
-# ' ' attribute section:
-
-    def fake_price(self):
-        price = str(self.number_random(1, 99)) + '.' + str(self.number_random(1, 99) + "€")
-        return price
-
-    def fake_payment(self, number=1):
-        paiement_list = ('Espece',
-                         'Carte bancaire',
-                         'Cheque bancaire',
-                         'Tiket restaurant')
-        # id = (autoIncrement)
-        mode = sample(paiement_list, number if number else len(paiement_list))
-        return [{mode: data} for data in mode]
-
-    def number_random(self, count, count1):
-        fake_number = randint(count, count1)
-        return str(fake_number)
-
-
-#     def key(self):
-#
-#         name = self.first_name()
-#         last_name = self.last_name()
-#         password = self.random_password()
-#
-#         num_ss_employe = self.number_random(1, 99999999999999)
-#         quality = self.quality()
-#         date = self.fake_date()
-#
-#         status_id =self.number_random(1, 999)
-#         status = self.status()
-#
-#         adress = self.adresse()
-#         zip = self.adresse_zip()
-#         country = self.adresse_country()
-#         adress2 = self.adresse_complement()
-#
-#         mail = self.fake_mail()
-#
-#         phone_id = self.number_random(1, 999)
-#         phone = self.fake_telephone()
-#
-#         restaurant_name = self.restaurant()
-#
-#         actor = (name, last_name, password,
-#                  adress, zip, country, adress2,
-#                  mail,
-#                  phone_id, phone)
-#         employe = (name, last_name, password,
-#                    adress, zip, country, adress2,
-#                    mail,
-#                    phone_id, phone,
-#                    num_ss_employe, quality, date)
-#         key = tuple(actor)
-#         print(employe)
-#         return  key
 
 def main():
     """ Initialize the data collect """
 
-    fake_data = FakeCollectingData()
+    init = FakeCollectingData()
+
+    fake = init.fake_address()
+    print(fake)
 
 if __name__ == "__main__":
     main()

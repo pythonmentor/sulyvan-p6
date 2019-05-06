@@ -1,6 +1,7 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
+import records
 
 CATEGORIES = ['Sodas',
               'Eaux',
@@ -17,5 +18,6 @@ ROYALE_PIZZA =  ['7610100514654',
                  '3076820002064'
                  ]
 
+db = records.Database("mysql+mysqlconnector://OCP6:OC_STUDENT@localhost/Oc_Pizza?charset=utf8mb4")
 
 

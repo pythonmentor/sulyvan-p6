@@ -1,12 +1,11 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
-
 from Python.faker_data import FakeCollectingData
-from Python.dataclass_data import *
+from Python import dataclass_data as table
 
-import records as rec
 from dataclasses import asdict
+import records as rec
 
 
 class Repository:
@@ -16,16 +15,8 @@ class Repository:
 
     def __init__(self, db):
         """ Connect to Mysql database from the class DataBaseUser() """
-        self.fake = FakeCollectingData()
         self.db = db
-        self.database = self.connect_mysql()
-
-    def connect_mysql(self):
-        """ Connecting in the database """
-        self.db = rec.Database("mysql+mysqlconnector://"
-                               "OCP6:OC_STUDENT@localhost/"
-                               "Oc_Pizza?charset=utf8mb4")
-        return self.db
+        self.table = table
 
     def save(self, instance):
         pass
@@ -35,55 +26,55 @@ class Repository:
             self.save(instance)
 
 
-"""Informations SQL code"""
+"""Information SQL code"""
 
 
-class EmailsRepository(Repository):
+class MailRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Emails(mail)
+            INSERT INTO Mail(mail)
             VALUES (:mail)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Emails 
+            SELECT id FROM Mail 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Emails
+            SELECT * FROM Mail
             """).all(as_dict=True)
-        return [Emails(**data) for data in rows]
+        return [self.table.Mail(**data) for data in rows]
 
 
-class PhonesRepository(Repository):
+class PhoneRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Phones(phone)
+            INSERT INTO Phone(phone)
             VALUES (:phone)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Phones 
+            SELECT id FROM Phone 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Phones
+            SELECT * FROM Phone
             """).all(as_dict=True)
-        return [Phones(**data) for data in rows]
+        return [self.table.Phone(**data) for data in rows]
 
 
-class AdressesRepository(Repository):
+class AddressRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Adresses(address, 
+            INSERT INTO Address(address, 
                                 zip_code, 
                                 city, 
                                 additional_address)
@@ -93,51 +84,51 @@ class AdressesRepository(Repository):
                     :additional_address)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Adresses 
+            SELECT id FROM Address 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Adresses
+            SELECT * FROM Address
             """).all(as_dict=True)
-        return [Adresses(**data) for data in rows]
+        return [self.table.Address(**data) for data in rows]
 
 
 """Actors SQL code"""
 
 
-class ActorsRepository(Repository):
+class ActorRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
-        data['Emails_id'] = instance.Emails.id
-        data['Phones_id'] = instance.Phones.id
-        data['Adresses_id'] = instance.Adresses.id
+        data['Mail_id'] = instance.Mail.id
+        data['Phone_id'] = instance.Phone.id
+        data['Address_id'] = instance.Address.id
         self.db.query("""
-            INSERT INTO Actors(first_name, 
+            INSERT INTO Actor(first_name, 
                                last_name, 
                                authentication_password,
-                               Emails_id, 
-                               Phones_id,
-                               Adresses_id)
+                               Mail_id, 
+                               Phone_id,
+                               Address_id)
             VALUES (:first_name, 
                     :last_name, 
                     :authentication_password,
-                    :Emails_id, 
-                    :Phones_id,
-                    :Adresses_id)
+                    :Mail_id, 
+                    :Phone_id,
+                    :Address_id)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Actors 
+            SELECT id FROM Actor 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Actors
+            SELECT * FROM Actor
             """).all(as_dict=True)
-        return [Actors(**data) for data in rows]
+        return [self.table.Actor(**data) for data in rows]
 
 
 """Restaurants SQL code"""
@@ -148,244 +139,241 @@ class StatusRepository(Repository):
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Statuses(status)
+            INSERT INTO Status(status)
             VALUES (:status)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Statuses 
+            SELECT id FROM Status 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Statuses
+            SELECT * FROM Status
             """).all(as_dict=True)
-        return [Statuses(**data) for data in rows]
+        return [self.table.Status(**data) for data in rows]
 
 
-class RestaurantsRepository(Repository):
+class RestaurantRepository(Repository):
     def save(self, instance):
         data = asdict(instance)
-        data['Addresses_id'] = instance.Addresses.id
-        data['Phones_id'] = instance.Phones.id
-        data['Mails_id'] = instance.Mails.id
+        data['Address_id'] = instance.Address.id
+        data['Phone_id'] = instance.Phone.id
+        data['Mail_id'] = instance.Mail.id
         self.db.query("""
-            INSERT INTO Restaurants(restaurant_name, 
-                                    Addresses_id,
-                                    Phones_id,
-                                    Mails_id)
+            INSERT INTO Restaurant(restaurant_name, 
+                                   Address_id,
+                                   Phone_id,
+                                   Mail_id)
             VALUES (:restaurant_name, 
-                    :Addresses_id,
-                    :Phones_id,
-                    :Mails_id)
+                    :Address_id,
+                    :Phone_id,
+                    :Mail_id)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Restaurants 
+            SELECT id FROM Restaurant 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Restaurants
+            SELECT * FROM Restaurant
             """).all(as_dict=True)
-        return [Restaurants(**data) for data in rows]
+        return [self.table.Restaurant(**data) for data in rows]
 
 
-class EmployeesRepository(Repository):
+class EmployeeRepository(Repository):
     def save(self, instance):
         data = asdict(instance)
         data['Status_id'] = instance.Status.id
-        data['Restaurants_id'] = instance.Restaurants.id
-
-        data['Actors_id'] = instance.Actors.id
+        data['Restaurant_id'] = instance.Restaurant.id
+        data['Actor_id'] = instance.Actor.id
         self.db.query("""
-            INSERT INTO Employees(social_security_numb, 
-                                  quality, 
-                                  date_entry,
-                                  Status_id,
-                                  Restaurants_id,
-                                  
-                                  Actors_id)
+            INSERT INTO Employee(social_security_numb, 
+                                 quality, 
+                                 date_entry,
+                                 Status_id,
+                                 Restaurant_id,
+                                 Actor_id)
             VALUES (:social_security_numb, 
                     :quality, 
                     :date_entry,
-                    Status_id,
-                    Restaurants_id,
-                    
-                    Actors_id)
+                    :Status_id,
+                    :Restaurant_id,
+                    :Actor_id)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Employees 
+            SELECT id FROM Employee 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Employees
+            SELECT * FROM Employee
             """).all(as_dict=True)
-        return [Employees(**data) for data in rows]
+        return [self.table.Employee(**data) for data in rows]
 
 
 """Billing SQL code"""
 
 
-class PaymentsRepository(Repository):
+class PaymentRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Payments(payment_mode)
+            INSERT INTO Payment(payment_mode)
             VALUES (:payment_mode)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Payments 
+            SELECT id FROM Payment 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Payments
+            SELECT * FROM Payment
             """).all(as_dict=True)
-        return [Payments(**data) for data in rows]
+        return [self.table.Payment(**data) for data in rows]
 
 
-class OrdersRepository(Repository):
+class OrderRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         data['Status_id'] = instance.Status.id
-        data['Actors_id'] = instance.Actors.id
-        data['Restaurants_id'] = instance.Restaurants.id
-        data['Adresses_id'] = instance.Adresses.id
+        data['Actor_id'] = instance.Actor.id
+        data['Restaurant_id'] = instance.Restaurant.id
+        data['Address_id'] = instance.Address.id
         self.db.query("""
-            INSERT INTO Orders(product_type, 
-                               order_date,
-                               Status_id,
-                               Actors_id,
-                               Restaurants_id,
-                               Adresses_id)
+            INSERT INTO Order(product_type, 
+                              order_date,
+                              Status_id,
+                              Actor_id,
+                              Restaurant_id,
+                              Address_id)
             VALUES (:product_type, 
                     :order_date,
                     :Status_id,
-                    :Actors_id,
-                    :Restaurants_id,
-                    :Adresses_id)
+                    :Actor_id,
+                    :Restaurant_id,
+                    :Address_id)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Orders 
+            SELECT id FROM Order 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Orders
+            SELECT * FROM Order
             """).all(as_dict=True)
-        return [Orders(**data) for data in rows]
+        return [self.table.Order(**data) for data in rows]
 
 
-class InvoicesRepository(Repository):
+class InvoiceRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
-        data['Adresses_id'] = instance.Adresses.id
-        data['Phones_id'] = instance.Phones.id
-        data['Actors_id'] = instance.Actors.id
-        data['Orders_id'] = instance.Orders_.d
+        data['Address_id'] = instance.Address.id
+        data['Phone_id'] = instance.Phone.id
+        data['Actor_id'] = instance.Actor.id
+        data['Order_id'] = instance.Order_.d
         self.db.query("""
-            INSERT INTO Invoices(invoices_date, 
-                                 product_type, 
-                                 product_price, 
-                                 product_tax,
-                                 Adresses_id,
-                                 Phones_id,
-                                 Actors_id,
-                                 Orders_id)
-            VALUES (:invoices_date, 
+            INSERT INTO Invoice(invoice_date, 
+                                product_type, 
+                                product_price, 
+                                product_tax,
+                                Address_id,
+                                Phone_id,
+                                Actor_id,
+                                Order_id)
+            VALUES (:invoice_date, 
                     :product_type, 
                     :product_price, 
                     :product_tax,
-                    :Adresses_id,
-                    :Phones_id,
-                    :Actors_id,
-                    :Orders_id)
+                    :Address_id,
+                    :Phone_id,
+                    :Actor_id,
+                    :Order_id)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Invoices 
+            SELECT id FROM Invoice 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Invoices
+            SELECT * FROM Invoice
             """).all(as_dict=True)
-        return [Invoices(**data) for data in rows]
+        return [self.table.Invoice(**data) for data in rows]
 
 
 """Stock SQL code"""
 
 
-class IngredientsRepository(Repository):
+class IngredientRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Ingredients(designation, 
-                                    weight)
+            INSERT INTO Ingredient(designation, 
+                                   weight)
             VALUES (:designation, 
                     :weight)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Ingredients 
+            SELECT id FROM Ingredient
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Ingredients
+            SELECT * FROM Ingredient
             """).all(as_dict=True)
-        return [Ingredients(**data) for data in rows]
+        return [self.table.Ingredient(**data) for data in rows]
 
 
-class ProductTypesRepository(Repository):
+class ProductTypeRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO ProductTypes(product_type)
+            INSERT INTO ProductType(product_type)
             VALUES (:product_type)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM ProductTypes 
+            SELECT id FROM ProductType
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM ProductTypes
+            SELECT * FROM ProductType
             """).all(as_dict=True)
-        return [ProductTypes(**data) for data in rows]
+        return [self.table.ProductType(**data) for data in rows]
 
 
-class ProductsRepository(Repository):
+class ProductRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Products(product_name, 
+            INSERT INTO Product(product_name, 
                                 product_price)
             VALUES (:product_name, 
                     :product_price)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Products 
+            SELECT id FROM Product
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Products
+            SELECT * FROM Product
             """).all(as_dict=True)
-        return [Products(**data) for data in rows]
+        return [self.table.Product(**data) for data in rows]
 
 
 """Associate SQL code"""
@@ -395,17 +383,17 @@ class ProductStockRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
-        data['Ingredients_id'] = instance.Ingredients.id
-        data['Restaurants_id'] = instance.Restaurants.id
+        data['Ingredient_id'] = instance.Ingredient.id
+        data['Restaurant_id'] = instance.Restaurant.id
         self.db.query("""
-            INSERT INTO ProductStock(Ingredients_id,
-                                     Restaurants_id,
+            INSERT INTO ProductStock(Ingredient_id,
+                                     Restaurant_id,
                                      name_product, 
                                      weight, 
                                      conditioning, 
                                      quantity)
-            VALUES (:Ingredients_id,
-                    :Restaurants_id,
+            VALUES (:Ingredient_id,
+                    :Restaurant_id,
                     :name_product, 
                     :weight, 
                     :conditioning, 
@@ -420,63 +408,63 @@ class ProductStockRepository(Repository):
         rows = self.db.query("""
             SELECT * FROM ProductStock
             """).all(as_dict=True)
-        return [ProductStock(**data) for data in rows]
+        return [self.table.ProductStock(**data) for data in rows]
 
 
-class CompositionsRepository(Repository):
+class CompositionRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
-        data['Ingredients_id'] = instance.Ingredients.id
-        data['Products_id'] = instance.Product.id
+        data['Ingredient_id'] = instance.Ingredient.id
+        data['Product_id'] = instance.Product.id
         self.db.query("""
-            INSERT INTO Compositions(Ingredients_id,
-                                     Products_id,
-                                     quantity)
-            VALUES (:Ingredients_id,
-                    :Products_id,
+            INSERT INTO Composition(Ingredient_id,
+                                    Product_id,
+                                    quantity)
+            VALUES (:Ingredient_id,
+                    :Product_id,
                     :quantity)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Compositions 
+            SELECT id FROM Composition 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Compositions
+            SELECT * FROM Composition
             """).all(as_dict=True)
-        return [Compositions(**data) for data in rows]
+        return [self.table.Composition(**data) for data in rows]
 
 
 class ShoppingCartRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
-        data['Orders_id'] = instance.Orders.id
-        data['Products_id'] = instance.Product.id
+        data['Order_id'] = instance.Order.id
+        data['Product_id'] = instance.Product.id
         self.db.query("""
-            INSERT INTO ShoppingCart(Orders_id,
-                                     Products_id,
+            INSERT INTO ShoppingCart(Order_id,
+                                     Product_id,
                                      article, 
                                      quantity, 
                                      price)
-            VALUES (:Orders_id,
-                    :Products_id,
+            VALUES (:Order_id,
+                    :Product_id,
                     :article, 
                     :quantity, 
                     :price)
             """, **data)
         instance.id = self.db.query("""
-            SELECT id FROM Shopping_Cart 
+            SELECT id FROM ShoppingCart 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Shopping_Cart
+            SELECT * FROM ShoppingCart
             """).all(as_dict=True)
-        return [ShoppingCart(**data) for data in rows]
+        return [self.table.ShoppingCart(**data) for data in rows]
 
 
 def main():
