@@ -1,8 +1,9 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
+
 from Python.config import db
-# from Python.dataclass_data import Status
+from Python.faker_data import FakeCollectingData
 from Python.generator_data import GeneratorData
 from Python.dataclass_data import (Status, ProductType, Payment,
                                    Restaurant, Address,
@@ -10,6 +11,7 @@ from Python.dataclass_data import (Status, ProductType, Payment,
 from Python.instance_data import (StatusRepository, ProductTypeRepository, PaymentRepository,
                                   RestaurantRepository, AddressRepository,
                                   MailRepository, PhoneRepository)
+
 
 class InsertData:
     """
@@ -36,22 +38,39 @@ class InsertData:
         payment = [Payment(**data) for data in generate.gen_payment_list()]
         payment_repo.save_all(payment)
 
-    def insert_restaurant_list(self, generate):
-        name_repo = RestaurantRepository(db)
-        restaurant = [Restaurant(**data) for data in generate.gen_restaurant_list()]
-        name_repo.save_all(restaurant)
-
+    def insert_restaurant_list(self, generate, fake):
+        restaurant = []
         address_repo = AddressRepository(db)
-        address = [Address(**data) for data in generate.gen_restaurant_list()]
+        address_ = [Address(**data) for data in generate.restaurant_address(number=1)]
+        address, zip_code, city = address_
         address_repo.save_all(address)
-
-        mail_repo = MailRepository(db)
-        mail = [Mail(**data) for data in generate.gen_restaurant_list()]
-        mail_repo.save_all(mail)
+        address_id = address_repo.last_id()
 
         phone_repo = PhoneRepository(db)
-        phone = [Phone(**data) for data in generate.gen_restaurant_list()]
+        phone = [Phone(**data) for data in generate.restaurant_phone(number=1)]
         phone_repo.save_all(phone)
+        phone_id = phone_repo.last_id()
+
+        mail_repo = MailRepository(db)
+        mail = [Mail(**data) for data in generate.restaurant_mail(number=1)]
+        mail_repo.save_all(mail)
+        mail_id = mail_repo.last_id()
+
+        restaurant_repo = RestaurantRepository(db)
+        restaurant_name = [Restaurant(**data) for data in fake.fake_restaurant(number=1)]
+        restaurant.append({'address': {
+                                'addresse': address,
+                                'zip_code': zip_code,
+                                'city': city},
+                           'phone': phone,
+                           'mail': mail,
+                           'restaurant_name': restaurant_name,
+                           'Addresses_id': address_id,
+                           'Phones_id': phone_id,
+                           'Mail_id': mail_id})
+        restaurant_repo.save_all(restaurant)
+
+
 
 # II. Insert Employee data
 # -
@@ -70,8 +89,8 @@ def main():
     """ Initialize the data collect """
     init = InsertData()
     generate = GeneratorData()
-
-    init.insert_restaurant_list(generate)
+    fake = FakeCollectingData()
+    init.insert_restaurant_list(generate, fake)
 
 if __name__ == "__main__":
     main()

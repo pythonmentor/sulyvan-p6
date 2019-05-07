@@ -3,8 +3,7 @@
 
 
 from Python.faker_data import FakeCollectingData
-from Python.dataclass_data import Status
-from Python.instance_data import StatusRepository
+
 
 class GeneratorData:
     """
@@ -21,30 +20,29 @@ class GeneratorData:
 
 # I. Generate the static data
 # - name_list = ('Oc Pizza Paris Xem', 'Oc Pizza Paris XIIem')
-    def gen_restaurant_list(self):
-        restaurant_list = self.fake.fake_restaurant()
-        name_1 = restaurant_list[-1]
-        address_1 = '12', 'rue Oc',
-        zip_1 = '75 000'
-        city_1 = 'Paris X em'
-        mail_1 = 'Oc_Pizza_Paris_Xem@Oc_pizza.com'
-        phone_1 = '+0145486730'
-        name_2 = restaurant_list[0]
-        address_2 = '14', 'rue Oc'
-        zip_2 = '75 001'
-        city_2 = 'Paris XII em'
-        mail_2 = 'Oc_Pizza_Paris_Xem@Oc_pizza.com'
-        phone_2 = '+0145486731'
-        oc_1 = ('X :',
-                name_1,
-                address_1, zip_1, city_1,
-                mail_1, phone_1)
-        oc_2 = ('XII :',
-                name_2,
-                address_2, zip_2, city_2,
-                mail_2, phone_2)
-        return (name_1, address_1, zip_1, city_1, mail_1, phone_1,
-                name_2, address_2, zip_2, city_2, mail_2, phone_2)
+    def restaurant_address(self, number=None):
+        address_list = []
+        address = ("'10', 'rue Oc'", "'12', 'rue Oc'")
+        zip = ('75 000', '75 001')
+        city = ('Paris X em', 'Paris XII em')
+        address_list.append({'address': address[number],
+                             'zip_code': zip[number],
+                             'city': city[number],
+                             'additional_address': ''})
+        return address_list
+
+
+    def restaurant_phone(self, number=None):
+        phone_list = []
+        phone = ('+0145486730', '+0145486731')
+        phone_list.append({'phone': phone[number]})
+        return phone_list
+
+    def restaurant_mail(self, number=None):
+        mail_list = []
+        mail = ('Oc_Pizza_Paris_Xem@Oc_pizza.com', 'Oc_Pizza_Paris_Xem@Oc_pizza.com')
+        mail_list.append({'mail': mail[number]})
+        return mail_list
 
 # - status_list
     def gen_status_list(self):
@@ -100,7 +98,7 @@ class GeneratorData:
 def main():
     """ Initialize the data collect """
     gen = GeneratorData()
-    status = gen.gen_product_type()
+    status = gen.restaurant_address( )
 
     # status = [Status(**data) for data in fake.fake_status(number=None)]
     print(status)

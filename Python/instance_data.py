@@ -1,9 +1,8 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
-from Python.faker_data import FakeCollectingData
-from Python import dataclass_data as table
 
+from Python import dataclass_data as table
 from dataclasses import asdict
 import records as rec
 
@@ -48,6 +47,12 @@ class MailRepository(Repository):
             """).all(as_dict=True)
         return [self.table.Mail(**data) for data in rows]
 
+    def last_id(self):
+        id = self.db.query("""
+            SELECT id FROM Mail 
+            ORDER BY id DESC LIMIT 1
+            """)
+        return id
 
 class PhoneRepository(Repository):
 
@@ -68,6 +73,12 @@ class PhoneRepository(Repository):
             """).all(as_dict=True)
         return [self.table.Phone(**data) for data in rows]
 
+    def last_id(self):
+        id = self.db.query("""
+            SELECT id FROM Phone 
+            ORDER BY id DESC LIMIT 1
+            """)
+        return id
 
 class AddressRepository(Repository):
 
@@ -93,6 +104,13 @@ class AddressRepository(Repository):
             SELECT * FROM Address
             """).all(as_dict=True)
         return [self.table.Address(**data) for data in rows]
+
+    def last_id(self):
+        id = self.db.query("""
+            SELECT id FROM Address 
+            ORDER BY id DESC LIMIT 1
+            """)
+        return id
 
 
 """Actors SQL code"""
@@ -180,7 +198,6 @@ class RestaurantRepository(Repository):
             SELECT * FROM Restaurant
             """).all(as_dict=True)
         return [self.table.Restaurant(**data) for data in rows]
-
 
 class EmployeeRepository(Repository):
     def save(self, instance):
@@ -469,12 +486,12 @@ class ShoppingCartRepository(Repository):
 
 def main():
 
-    # db = \
-    rec.Database("mysql+mysqlconnector://"
+    db = rec.Database("mysql+mysqlconnector://"
                  "OCP6:OC_STUDENT@localhost/"
                  "Oc_Pizza?charset=utf8mb4")
-    # create = Repository(db)
-
+    id_ = MailRepository(db)    # create = Repository(db)
+    id = id_.last_id()
+    # print(id)
 
 if __name__ == "__main__":
     main()
