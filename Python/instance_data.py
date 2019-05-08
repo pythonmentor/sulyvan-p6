@@ -51,8 +51,13 @@ class MailRepository(Repository):
         id = self.db.query("""
             SELECT id FROM Mail 
             ORDER BY id DESC LIMIT 1
-            """)
+            """).all(as_dict=True)
         return id
+
+#     def last_id(self):
+#         return self.db.query("""
+#             SELECT LAST_INSERT_ID() AS last_id FROM Mail
+#         """, fetchall=True)['last_id']
 
 class PhoneRepository(Repository):
 
@@ -77,8 +82,11 @@ class PhoneRepository(Repository):
         id = self.db.query("""
             SELECT id FROM Phone 
             ORDER BY id DESC LIMIT 1
-            """)
+            """).all(as_dict=True)
         return id
+# return self.db.query("""
+#     SELECT LAST_INSERT_ID() AS last_id FROM Mail
+# """, fetchall=True)['last_id']
 
 class AddressRepository(Repository):
 
@@ -109,7 +117,7 @@ class AddressRepository(Repository):
         id = self.db.query("""
             SELECT id FROM Address 
             ORDER BY id DESC LIMIT 1
-            """)
+            """).all(as_dict=True)
         return id
 
 

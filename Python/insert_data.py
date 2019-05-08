@@ -39,36 +39,35 @@ class InsertData:
         payment_repo.save_all(payment)
 
     def insert_restaurant_list(self, generate, fake):
-        restaurant = []
+        restaurant_address = []
         address_repo = AddressRepository(db)
-        address_ = [Address(**data) for data in generate.restaurant_address(number=1)]
-        address, zip_code, city = address_
-        address_repo.save_all(address)
-        address_id = address_repo.last_id()
+        address = [Address(**data) for data in generate.restaurant_address(number=0)]
+        zip_code = [Address(**data) for data in generate.restaurant_zip(number=0)]
+        city = [Address(**data) for data in generate.rastaurant_city(number=0)]
+        restaurant_address.append({'address': address,
+                                   'zip_code': zip_code,
+                                   'city': city,
+                                   'additional_address': ''})
+        address_repo.save_all(restaurant_address)
+        # address_id = address_repo.last_id()
 
-        phone_repo = PhoneRepository(db)
-        phone = [Phone(**data) for data in generate.restaurant_phone(number=1)]
-        phone_repo.save_all(phone)
-        phone_id = phone_repo.last_id()
+        # phone_repo = PhoneRepository(db)
+        # phone = [Phone(**data) for data in generate.restaurant_phone(number=0)]
+        # phone_repo.save_all(phone)
+        # phone_id = phone_repo.last_id()
 
-        mail_repo = MailRepository(db)
-        mail = [Mail(**data) for data in generate.restaurant_mail(number=1)]
-        mail_repo.save_all(mail)
-        mail_id = mail_repo.last_id()
+        # mail_repo = MailRepository(db)
+        # mail = [Mail(**data) for data in generate.restaurant_mail(number=0)]
+        # mail_repo.save_all(mail)
+        # mail_id = mail_repo.last_id()
 
-        restaurant_repo = RestaurantRepository(db)
-        restaurant_name = [Restaurant(**data) for data in fake.fake_restaurant(number=1)]
-        restaurant.append({'address': {
-                                'addresse': address,
-                                'zip_code': zip_code,
-                                'city': city},
-                           'phone': phone,
-                           'mail': mail,
-                           'restaurant_name': restaurant_name,
-                           'Addresses_id': address_id,
-                           'Phones_id': phone_id,
-                           'Mail_id': mail_id})
-        restaurant_repo.save_all(restaurant)
+        # restaurant_repo = RestaurantRepository(db)
+        # restaurant_name = [Restaurant(**data) for data in fake.fake_restaurant(number=0)]
+        # restaurant.append({'restaurant_name': restaurant_name,
+                           # 'Addresses_id': address_id,
+                           # 'Phones_id': phone_id,
+                           # 'Mail_id': mail_id})
+        # restaurant_repo.save_all(restaurant)
 
 
 
@@ -90,7 +89,7 @@ def main():
     init = InsertData()
     generate = GeneratorData()
     fake = FakeCollectingData()
-    init.insert_restaurant_list(generate, fake)
-
+    test = init.insert_restaurant_list(generate, fake)
+    print(test)
 if __name__ == "__main__":
     main()

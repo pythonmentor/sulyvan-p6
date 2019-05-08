@@ -14,35 +14,85 @@ class GeneratorData:
         self.fake = FakeCollectingData()
 #
     def test_fake(self):
-        key = self.fake.fake_telephone()
+        add = self.restaurant_address()
+        zip = self.restaurant_zip()
+        city = self.rastaurant_city()
+        # mail = self.restaurant_mail()
+        # phone = self.restaurant_phone()
+        key = add, zip, city
         return key
 
-
 # I. Generate the static data
-# - name_list = ('Oc Pizza Paris Xem', 'Oc Pizza Paris XIIem')
-    def restaurant_address(self, number=None):
-        address_list = []
-        address = ("'10', 'rue Oc'", "'12', 'rue Oc'")
-        zip = ('75 000', '75 001')
-        city = ('Paris X em', 'Paris XII em')
-        address_list.append({'address': address[number],
-                             'zip_code': zip[number],
-                             'city': city[number],
-                             'additional_address': ''})
-        return address_list
 
+    def restaurant_address(self, number=None):
+        address =[]
+        address_list = ("'10' 'rue Oc'",
+                        "'12' 'rue Oc'")
+        if number == 0:
+            address.append({'address': address_list[0]})
+            return address
+        elif number == 1:
+            address.append({'address_2': address_list[1]})
+            return address
+        address.append({'address': address_list[0],
+                        'address_2':address_list[1]})
+        return address
+
+    def restaurant_zip(self, number=None):
+        zip = []
+        zip_list = ('75 000',
+                    '75 001')
+        if number == 0:
+             zip.append({'zip_code': zip_list[0]})
+             return zip
+        elif number == 1:
+            zip.append({'zip_code_2': zip_list[1]})
+            return zip
+        zip.append({'zip_code': zip_list[0],
+                    'zip_code_2':zip_list[1]})
+        return zip
+
+    def rastaurant_city(self, number=None):
+        city_list = ('Paris X em',
+                     'Paris XII em')
+        city = []
+        if number == 0:
+            city.append({'city': city_list[0]})
+            return city
+        elif number == 1:
+            city.append({'city_2': city_list[1]})
+            return city
+        city.append({'city': city_list[0],
+                    'city_2':city_list[1]})
+        return city
 
     def restaurant_phone(self, number=None):
-        phone_list = []
-        phone = ('+0145486730', '+0145486731')
-        phone_list.append({'phone': phone[number]})
-        return phone_list
+        phone = []
+        phone_list = ('+0145486730',
+                      '+0145486731')
+        if number == 0:
+            phone.append({'phone': phone_list[0]})
+            return phone
+        elif number == 1:
+            phone.append({'phone_2': phone_list[1]})
+            return phone
+        phone.append({'phone': phone_list[0],
+                      'phone_2':phone_list[1]})
+        return phone
 
     def restaurant_mail(self, number=None):
-        mail_list = []
-        mail = ('Oc_Pizza_Paris_Xem@Oc_pizza.com', 'Oc_Pizza_Paris_Xem@Oc_pizza.com')
-        mail_list.append({'mail': mail[number]})
-        return mail_list
+        mail = []
+        mail_list = ('Oc_Pizza_Paris_Xem@Oc_pizza.com',
+                     'Oc_Pizza_Paris_Xem@Oc_pizza.com')
+        if number == 0:
+            mail.append({'mail': mail_list[0]})
+            return mail
+        elif number == 1:
+            mail.append({'mail_2': mail_list[1]})
+            return mail
+        mail.append({'mail': mail_list[0],
+                     'mail_2': mail_list[1]})
+        return mail
 
 # - status_list
     def gen_status_list(self):
@@ -69,11 +119,6 @@ class GeneratorData:
 
 # V. Generate the Administrative data
 
-
-    def gen_address(self):
-        address = self.fake.fake_address()
-        return address
-
     def generator_final(self):
         # print(self.test_fake())
         # print('1 :', self.gen_restaurant_list())
@@ -88,17 +133,11 @@ class GeneratorData:
         # print(self.gen_aname_list())
         pass
 
-    def gen_status(self):
-        pass
-        # status = [Status(**data) for data in fake_import.fake_status(number=None)]
-        # return status
-
-
 
 def main():
     """ Initialize the data collect """
     gen = GeneratorData()
-    status = gen.restaurant_address( )
+    status = gen.test_fake()
 
     # status = [Status(**data) for data in fake.fake_status(number=None)]
     print(status)
