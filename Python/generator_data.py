@@ -3,7 +3,7 @@
 
 
 from Python.faker_data import FakeCollectingData
-
+from Python.dataclass_data import Restaurant, Address, Phone, Email, Actor
 
 class GeneratorData:
     """
@@ -12,135 +12,122 @@ class GeneratorData:
 
     def __init__(self):
         self.fake = FakeCollectingData()
-#
-    def test_fake(self):
-        add = self.restaurant_address()
-        zip = self.restaurant_zip()
-        city = self.rastaurant_city()
-        # mail = self.restaurant_mail()
-        # phone = self.restaurant_phone()
-        key = add, zip, city
-        return key
 
-# I. Generate the static data
-
-    def restaurant_address(self, number=None):
-        address =[]
-        address_list = ("'10' 'rue Oc'",
-                        "'12' 'rue Oc'")
-        if number == 0:
-            address.append({'address': address_list[0]})
-            return address
-        elif number == 1:
-            address.append({'address_2': address_list[1]})
-            return address
-        address.append({'address': address_list[0],
-                        'address_2':address_list[1]})
-        return address
-
-    def restaurant_zip(self, number=None):
-        zip = []
-        zip_list = ('75 000',
-                    '75 001')
-        if number == 0:
-             zip.append({'zip_code': zip_list[0]})
-             return zip
-        elif number == 1:
-            zip.append({'zip_code_2': zip_list[1]})
-            return zip
-        zip.append({'zip_code': zip_list[0],
-                    'zip_code_2':zip_list[1]})
-        return zip
-
-    def rastaurant_city(self, number=None):
-        city_list = ('Paris X em',
-                     'Paris XII em')
-        city = []
-        if number == 0:
-            city.append({'city': city_list[0]})
-            return city
-        elif number == 1:
-            city.append({'city_2': city_list[1]})
-            return city
-        city.append({'city': city_list[0],
-                    'city_2':city_list[1]})
-        return city
-
-    def restaurant_phone(self, number=None):
-        phone = []
-        phone_list = ('+0145486730',
-                      '+0145486731')
-        if number == 0:
-            phone.append({'phone': phone_list[0]})
-            return phone
-        elif number == 1:
-            phone.append({'phone_2': phone_list[1]})
-            return phone
-        phone.append({'phone': phone_list[0],
-                      'phone_2':phone_list[1]})
-        return phone
-
-    def restaurant_mail(self, number=None):
-        mail = []
-        mail_list = ('Oc_Pizza_Paris_Xem@Oc_pizza.com',
-                     'Oc_Pizza_Paris_Xem@Oc_pizza.com')
-        if number == 0:
-            mail.append({'mail': mail_list[0]})
-            return mail
-        elif number == 1:
-            mail.append({'mail_2': mail_list[1]})
-            return mail
-        mail.append({'mail': mail_list[0],
-                     'mail_2': mail_list[1]})
-        return mail
-
-# - status_list
+    # - status_list
     def gen_status_list(self):
         status_list = self.fake.fake_status(number=None)
         return status_list
 
-# - product_type
+    # - product_type
     def gen_product_type(self):
         product_type = self.fake.fake_product_type(number=None)
         return product_type
 
-# - paiement_list
+    # - payment_list
     def gen_payment_list(self):
         payment_list = self.fake.fake_payment(number=None)
         return payment_list
 
-# I. Generate Restaurant
+    def gen_restaurants(self, number=None):
+        restaurant_address = [
+            Restaurant(
+                restaurant_name="OC Pizza Paris X",
+                address=Address(
+                    address="10 rue Oc",
+                    zip_code="75 000",
+                    city="Paris X em",
+                    additional_address="",),
+                phone=Phone(
+                    phone="+0145486730",),
+                email=Email(
+                    mail="Oc_Pizza_Paris_Xem@Oc_pizza.com",)),
 
-# II. Generate Employee data
+            Restaurant(
+                restaurant_name="OC Pizza Paris XII",
+                address=Address(
+                    address="12 rue Oc",
+                    zip_code="75 001",
+                    city="Paris XII em",
+                    additional_address="",),
+                phone=Phone(
+                    phone="+0145486731",),
+                email=Email(
+                    mail="Oc_Pizza_Paris_XIIem@Oc_pizza.com",))]
 
-# III. Generate Actors data
+        if number is None or number >= len(restaurant_address):
+            return restaurant_address
+        return restaurant_address[number]
 
-# IV. Generate the Products and Products stock data
 
-# V. Generate the Administrative data
+"""
+Product: 
+        product_name:
+        product_price:
+        ProductType_id:
+        
+Ingredient: 
+        designation:
+        weight:
+ 
+ 
+ProductStock:
+        Ingredients_id:
+        Restaurants_id:
+        name_product:
+        weight:
+        conditioning:
+        quantity:
 
-    def generator_final(self):
-        # print(self.test_fake())
-        # print('1 :', self.gen_restaurant_list())
-        # self.gen_status_list()
-        # print('3 :', self.gen_quality_list())
-        # print('4 :', self.gen_payment_list())
+composition:
+        Ingredients_id
+        Products_id:
+        quantity:
 
-        # print(self.gen_address())
-        # print(self.gen_aname_list())
-        # print(self.gen_aname_list())
-        # print(self.gen_aname_list())
-        # print(self.gen_aname_list())
-        pass
+ShoppingCart:
+        Orders_id:
+        Products_id:
+        article:
+        quantity:
+        price:
+        
+"""
 
+#     def actors(self, number=1):
+#         return [
+#             Actor(
+#                  restaurant_name="OC Pizza Paris X",
+#                 #                 address=Address(
+#                 #                     address="10 rue Oc",
+#                 #                     zip_code="75 000",
+#                 #                     city="Paris X em",
+#                 #                     additional_address="",
+#                 #                 ),
+#                 #                 phone=Phone(
+#                 #                     phone="+0145486730",
+#                 #                 ),
+#                 #                 email=Email(
+#                 #                     mail="Oc_Pizza_Paris_Xem@Oc_pizza.com",
+#                 #                 )),
+#                 first_name=self.fake.fake_first_name(),
+#                 last_name=self.fake.fake_last_name(),
+#                 authentication_password=self.fake.fake_password(),
+#
+#                 address_id=Address(*self.fake.fake_address()),
+#                 phone_id=Phone(
+#                     phone=self.fake.fake_phone(),
+#                 ),
+#                 mail_id=Email(
+#                     mail=self.fake.fake_mail(),
+#                 )
+#             )
+#             for _ in range(number)
+#         ]
 
 def main():
     """ Initialize the data collect """
     gen = GeneratorData()
-    status = gen.test_fake()
 
     # status = [Status(**data) for data in fake.fake_status(number=None)]
-    print(status)
 
 if __name__ == "__main__":
     main()

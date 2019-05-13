@@ -24,53 +24,65 @@ class Repository:
         for instance in collection:
             self.save(instance)
 
+    def last_id(self):
+        rows = self.db.query("""
+            SELECT LAST_INSERT_ID() AS id
+            """)
+        for row in rows:
+            return row['id']
+
 
 """Information SQL code"""
 
 
-class MailRepository(Repository):
+class EmailRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Mail(mail)
-            VALUES (:mail)
+            INSERT INTO Email(id, mail)
+            VALUES (:id, :mail)
             """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Mail 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
+
+        instance.id = self.last_id()
+
+    def get(self, id):
+        rows = self.db.query("""
+            SELECT * FROM Email WHERE id = :id
+            """, id=id).as_dict()
+        for row in rows:
+            return self.table.Email(**row)
 
     def get_all(self):
         rows = self.db.query("""
-            SELECT * FROM Mail
+            SELECT * FROM Email
             """).all(as_dict=True)
-        return [self.table.Mail(**data) for data in rows]
+        return [self.table.Email(**data) for data in rows]
 
-    def last_id(self):
-        id = self.db.query("""
-            SELECT id FROM Mail 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)
-        return id
-
-#     def last_id(self):
-#         return self.db.query("""
-#             SELECT LAST_INSERT_ID() AS last_id FROM Mail
-#         """, fetchall=True)['last_id']
 
 class PhoneRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Phone(phone)
-            VALUES (:phone)
+            INSERT INTO Phone(id, 
+                              phone)
+            VALUES (:id, 
+                    :phone)
             """, **data)
         instance.id = self.db.query("""
             SELECT id FROM Phone 
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
+
+        instance.id = self.last_id()
+
+    def get(self, id):
+        rows = self.db.query("""
+            SELECT * FROM Phone WHERE id = :id
+            """, id=id).as_dict()
+        for row in rows:
+            return self.table.Phone(**row)
 
     def get_all(self):
         rows = self.db.query("""
@@ -78,34 +90,32 @@ class PhoneRepository(Repository):
             """).all(as_dict=True)
         return [self.table.Phone(**data) for data in rows]
 
-    def last_id(self):
-        id = self.db.query("""
-            SELECT id FROM Phone 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)
-        return id
-# return self.db.query("""
-#     SELECT LAST_INSERT_ID() AS last_id FROM Mail
-# """, fetchall=True)['last_id']
 
 class AddressRepository(Repository):
 
     def save(self, instance):
         data = asdict(instance)
         self.db.query("""
-            INSERT INTO Address(address, 
+            INSERT INTO Address(id,
+                                address, 
                                 zip_code, 
                                 city, 
                                 additional_address)
-            VALUES (:address, 
+            VALUES (:id,
+                    :address, 
                     :zip_code, 
                     :city, 
                     :additional_address)
             """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Address 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
+
+        instance.id = self.last_id()
+
+    def get(self, id):
+        rows = self.db.query("""
+                SELECT * FROM Address WHERE id = :id
+                """, id=id).as_dict()
+        for row in rows:
+            return self.table.Email(**row)
 
     def get_all(self):
         rows = self.db.query("""
@@ -113,48 +123,67 @@ class AddressRepository(Repository):
             """).all(as_dict=True)
         return [self.table.Address(**data) for data in rows]
 
-    def last_id(self):
-        id = self.db.query("""
-            SELECT id FROM Address 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)
-        return id
-
 
 """Actors SQL code"""
 
 
 class ActorRepository(Repository):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.address = AddressRepository(self.db)
+        self.phones = PhoneRepository(self.db)
+        self.emails = EmailRepository(self.db)
+
     def save(self, instance):
+        self.address.save(instance.address_id)
+        self.phones.save(instance.phone_id)
+        self.emails.save(instance.mail_id)
         data = asdict(instance)
-        data['Mail_id'] = instance.Mail.id
-        data['Phone_id'] = instance.Phone.id
-        data['Address_id'] = instance.Address.id
+        data['Emails_id'] = instance.mail_id.id
+        data['Phones_id'] = instance.phone_id.id
+        data['Addresses_id'] = instance.address_id.id
         self.db.query("""
             INSERT INTO Actor(first_name, 
-                               last_name, 
-                               authentication_password,
-                               Mail_id, 
-                               Phone_id,
-                               Address_id)
+                              last_name, 
+                              authentication_password,
+                              Emails_id, 
+                              Phones_id,
+                              Addresses_id)
             VALUES (:first_name, 
                     :last_name, 
                     :authentication_password,
-                    :Mail_id, 
-                    :Phone_id,
-                    :Address_id)
+                    :Emails_id, 
+                    :Phones_id,
+                    :Addresses_id)
             """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Actor 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
+
+        instance.id = self.last_id()
+
+    def get(self, id):
+        rows = self.db.query("""
+            SELECT * FROM Actor WHERE id = :id
+            """, id=id).as_dict()
+
+        for actor in rows:
+            self._get_foreign_objects(actor)
+            return self.table.Restaurant(**actor)
 
     def get_all(self):
         rows = self.db.query("""
             SELECT * FROM Actor
             """).all(as_dict=True)
+        for actor in rows:
+            self._get_foreign_objects(actor)
         return [self.table.Actor(**data) for data in rows]
+
+    def _get_foreign_objects(self, actor):
+        actor['address'] = self.address.get(actor['Addresses_id'])
+        del actor['Addresses_id']
+        actor['phone'] = self.phones.get(actor['Phones_id'])
+        del actor['Phones_id']
+        actor['email'] = self.emails.get(actor['Emails_id'])
+        del actor['Emails_id']
 
 
 """Restaurants SQL code"""
@@ -181,33 +210,66 @@ class StatusRepository(Repository):
 
 
 class RestaurantRepository(Repository):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.addresses = AddressRepository(self.db)
+        self.phones = PhoneRepository(self.db)
+        self.emails = EmailRepository(self.db)
+
     def save(self, instance):
+        self.addresses.save(instance.address)
+        self.phones.save(instance.phone)
+        self.emails.save(instance.email)
+
         data = asdict(instance)
-        data['Address_id'] = instance.Address.id
-        data['Phone_id'] = instance.Phone.id
-        data['Mail_id'] = instance.Mail.id
+        data['Addresses_id'] = instance.address.id
+        data['Phones_id'] = instance.phone.id
+        data['Emails_id'] = instance.email.id
         self.db.query("""
             INSERT INTO Restaurant(restaurant_name, 
-                                   Address_id,
-                                   Phone_id,
-                                   Mail_id)
+                                   Addresses_id,
+                                   Phones_id,
+                                   Emails_id)
             VALUES (:restaurant_name, 
-                    :Address_id,
-                    :Phone_id,
-                    :Mail_id)
+                    :Addresses_id,
+                    :Phones_id,
+                    :Emails_id)
             """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Restaurant 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
+
+        instance.id = self.last_id()
+
+    def get(self, id):
+
+        rows = self.db.query("""
+                SELECT * FROM Restaurant WHERE id = :id
+                """, id=id).as_dict()
+
+        for restaurant in rows:
+            self._get_foreign_objects(restaurant)
+            return self.table.Restaurant(**restaurant)
 
     def get_all(self):
+
         rows = self.db.query("""
             SELECT * FROM Restaurant
             """).all(as_dict=True)
+
+        for restaurant in rows:
+            self._get_foreign_objects(restaurant)
         return [self.table.Restaurant(**data) for data in rows]
 
+    def _get_foreign_objects(self, restaurant):
+        restaurant['address'] = self.addresses.get(restaurant['Addresses_id'])
+        del restaurant['Addresses_id']
+        restaurant['phone'] = self.phones.get(restaurant['Phones_id'])
+        del restaurant['Phones_id']
+        restaurant['email'] = self.emails.get(restaurant['Emails_id'])
+        del restaurant['Emails_id']
+
+
 class EmployeeRepository(Repository):
+
     def save(self, instance):
         data = asdict(instance)
         data['Status_id'] = instance.Status.id
@@ -303,7 +365,7 @@ class InvoiceRepository(Repository):
         data['Address_id'] = instance.Address.id
         data['Phone_id'] = instance.Phone.id
         data['Actor_id'] = instance.Actor.id
-        data['Order_id'] = instance.Order_.d
+        data['Order_id'] = instance.Order.id
         self.db.query("""
             INSERT INTO Invoice(invoice_date, 
                                 product_type, 
@@ -495,11 +557,10 @@ class ShoppingCartRepository(Repository):
 def main():
 
     db = rec.Database("mysql+mysqlconnector://"
-                 "OCP6:OC_STUDENT@localhost/"
-                 "Oc_Pizza?charset=utf8mb4")
-    id_ = MailRepository(db)    # create = Repository(db)
-    id = id_.last_id()
-    # print(id)
+                      "OCP6:OC_STUDENT@localhost/"
+                      "Oc_Pizza?charset=utf8mb4")
+    EmailRepository(db)    # create = Repository(db)
+
 
 if __name__ == "__main__":
     main()

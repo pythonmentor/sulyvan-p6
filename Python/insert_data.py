@@ -5,13 +5,9 @@
 from Python.config import db
 from Python.faker_data import FakeCollectingData
 from Python.generator_data import GeneratorData
-from Python.dataclass_data import (Status, ProductType, Payment,
-                                   Restaurant, Address,
-                                   Mail, Phone)
+from Python.dataclass_data import (Status, ProductType, Payment)
 from Python.instance_data import (StatusRepository, ProductTypeRepository, PaymentRepository,
-                                  RestaurantRepository, AddressRepository,
-                                  MailRepository, PhoneRepository)
-
+                                  RestaurantRepository, ActorRepository)
 
 class InsertData:
     """
@@ -22,6 +18,18 @@ class InsertData:
         self.db = db
 
 # I. Insert the static data
+
+    def drop_and_create(self):
+        self.db.query("""
+            DROP TABLE `oc_pizza`.`actor`, `oc_pizza`.`address`,
+            `oc_pizza`.`composition`, `oc_pizza`.`email`,
+            `oc_pizza`.`employee`, `oc_pizza`.`ingredient`,
+            `oc_pizza`.`invoice`, `oc_pizza`.`order`, `oc_pizza`.`payment`,
+            `oc_pizza`.`phone`, `oc_pizza`.`product`, `oc_pizza`.`productstock`,
+            `oc_pizza`.`producttype`, `oc_pizza`.`restaurant`,
+            `oc_pizza`.`shoppingcart`, `oc_pizza`.`status`;
+            """)
+
 
     def insert_status_list(self, generate):
         status_repo = StatusRepository(db)
@@ -38,38 +46,22 @@ class InsertData:
         payment = [Payment(**data) for data in generate.gen_payment_list()]
         payment_repo.save_all(payment)
 
-    def insert_restaurant_list(self, generate, fake):
-        restaurant_address = []
-        address_repo = AddressRepository(db)
-        address = [Address(**data) for data in generate.restaurant_address(number=0)]
-        zip_code = [Address(**data) for data in generate.restaurant_zip(number=0)]
-        city = [Address(**data) for data in generate.rastaurant_city(number=0)]
-        restaurant_address.append({'address': address,
-                                   'zip_code': zip_code,
-                                   'city': city,
-                                   'additional_address': ''})
-        address_repo.save_all(restaurant_address)
-        # address_id = address_repo.last_id()
+    def insert_restaurant_list(self, generate):
+        restaurants = RestaurantRepository(db)
+        restaurants.save_all(generate.restaurants())
 
-        # phone_repo = PhoneRepository(db)
-        # phone = [Phone(**data) for data in generate.restaurant_phone(number=0)]
-        # phone_repo.save_all(phone)
-        # phone_id = phone_repo.last_id()
+    def insert_actor_list(self, generate):
+        actors = ActorRepository(db)
+        actors.save_all(generate.actors(20))
 
-        # mail_repo = MailRepository(db)
-        # mail = [Mail(**data) for data in generate.restaurant_mail(number=0)]
-        # mail_repo.save_all(mail)
-        # mail_id = mail_repo.last_id()
-
-        # restaurant_repo = RestaurantRepository(db)
-        # restaurant_name = [Restaurant(**data) for data in fake.fake_restaurant(number=0)]
-        # restaurant.append({'restaurant_name': restaurant_name,
-                           # 'Addresses_id': address_id,
-                           # 'Phones_id': phone_id,
-                           # 'Mail_id': mail_id})
-        # restaurant_repo.save_all(restaurant)
-
-
+    def customer_insert(self):
+        customer = ['restaurant_id',
+                    'actor_attribute',
+                    'address_attribute',
+                    'mail_attribute',
+                    'phone_attribute',
+                    'shopping_cart_attribute',]
+        pass
 
 # II. Insert Employee data
 # -
@@ -89,7 +81,10 @@ def main():
     init = InsertData()
     generate = GeneratorData()
     fake = FakeCollectingData()
-    test = init.insert_restaurant_list(generate, fake)
-    print(test)
+    # init.drop_and_create()
+    # init.insert_restaurant_list(generate)
+
+    # init.insert_actor_list(generate)
+
 if __name__ == "__main__":
     main()

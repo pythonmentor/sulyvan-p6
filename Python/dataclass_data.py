@@ -10,7 +10,7 @@ from decimal import Decimal
 
 
 @dataclass
-class Mail:
+class Email:
     mail: str
     # Id is AUTO_INCREMENT
     id: int = None
@@ -40,9 +40,9 @@ class Actor:
     last_name: str
     authentication_password: str
     # Foreign key attribute
-    Email_id: Mail
-    Phone_id: Phone
-    Address_id: Address
+    mail_id: Email
+    phone_id: Phone
+    address_id: Address
     # Id is AUTO_INCREMENT
     id: int = None
 
@@ -60,9 +60,9 @@ class Status:
 class Restaurant:
     restaurant_name: str
     # Foreign key attribute
-    Address_id: Address
-    Phone_id: Phone
-    Mail_id: Mail
+    address: Address
+    phone: Phone
+    email: Email
     # Id is AUTO_INCREMENT
     id: int = None
 
@@ -72,10 +72,10 @@ class Employee:
     quality: str
     date_entry: str
     # Foreign key attribute
-    Status_id: Status
-    Restaurant_id: Restaurant
+    status_id: Status
+    restaurant_id: Restaurant
 
-    Actor_id: Actor
+    actor_id: Actor
     # L'id des employes est une FK qui pointe ver l'Id des acteurs, donc == à "Actors_id"?
     id: int
 
@@ -94,10 +94,10 @@ class Order:
     product_type: str
     order_date: str
     # Foreign key attribute
-    Status_id: Status
-    Actor_id: Actor
-    Restaurant_id: Restaurant
-    Address_id: Address
+    status_id: Status
+    actor_id: Actor
+    restaurant_id: Restaurant
+    address_id: Address
     # Id is AUTO_INCREMENT
     id: int = None
 
@@ -111,10 +111,10 @@ class Invoice:
     payment_id: int # J'ai un doute sur cet attribut, qui n'est pas une clef ni clef etrangere ni id en auto increment
 
     # Foreign key attribute
-    Address_id: Address
-    Phone_id: Phone
-    Actor_id: Actor
-    Order_id: Order
+    address_id: Address
+    phone_id: Phone
+    actor_id: Actor
+    order_id: Order
     # Id is AUTO_INCREMENT
     id: int = None
 
@@ -149,8 +149,8 @@ class Product:
 @dataclass
 class ProductStock:
     # Foreign key attribute
-    Ingredient_id: Ingredient
-    Restaurant_id: Restaurant
+    ingredients_id: Ingredient
+    restaurants_id: Restaurant
     # Attribute
     name_product: str
     weight: float
@@ -160,16 +160,16 @@ class ProductStock:
 @dataclass
 class Composition:
     # Foreign key attribute
-    Ingredient_id: Ingredient
-    Product_id: Product
+    ingredients_id: Ingredient
+    products_id: Product
     # Attribute
     quantity: float
 
 @dataclass
 class ShoppingCart:
     # Foreign key attribute
-    Order_id: Order
-    Product_id: Product
+    orders_id: Order
+    products_id: Product
     # Attribute
     article: str
     quantity: int

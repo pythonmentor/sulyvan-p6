@@ -49,19 +49,21 @@ class ApiCollectingData:
                 'generic_name_fr']
         for product in all_products:
             if self.validate_the_data(keys, product):
-                barcode = self.barcode(product)
-                name = self.name(product)
-                sub_category = self.sub_category(product)
+
+                id = self.barcode(product)
+                product_name = self.name(product)
+                product_type = self.sub_category(product)
                 designation = self.designation(product)
-                key = (barcode,
-                       name,
-                       sub_category,
+
+                key = (id,
+                       product_name,
+                       product_type,
                        designation)
                 formatting = key
                 product_final.append(formatting)
-                print('id_produit :', int(barcode), '\n',
-                      'produit :', name.upper(), '\n',
-                      'présent dans :', sub_category, '\n',
+                print('id :', int(id), '\n',
+                      'product_name :', product_name.upper(), '\n',
+                      'product_type :', product_type, '\n',
                       'designation :', designation.upper(), '\n',
                       f"Nous avons récupéré "
                       f"{len(product_final)} "
@@ -78,22 +80,27 @@ class ApiCollectingData:
             response = req.get(bar_code, params=config)
             products_section = response.json()
             products_barcode = products_section['product']
-            barcode = self.barcode(products_barcode)
-            name = self.name(products_barcode)
+
+            Ingredients_id = self.barcode(products_barcode)
+            name_product = self.name(products_barcode)
+            weight = self.weight(products_barcode)
+
             categories = self.category_barcode(products_barcode)
             designation = self.designation(products_barcode)
-            weight = self.weight(products_barcode)
-            key_barcode = (barcode,
-                           name.upper(),
+
+            key_barcode = (Ingredients_id,
+                           name_product.upper(),
                            designation,
                            categories.upper(),
                            weight)
             formatting = key_barcode
             product_barcode.append(formatting)
-            print('id_produit :', int(barcode), '\n',
-                  'produit :', name.upper(), '\n',
-                  'présent dans :', categories, '\n',
+            print('id_produit :', int(Ingredients_id), '\n',
+                  'name_product :', name_product.upper(), '\n',
+                  # 'présent dans :', categories, '\n',
                   'designation :', designation.upper(), '\n',
+                  'weight : ', weight, '\n',
+
                   f"Nous avons récupéré {len(product_barcode)} produits", '\n' * 2)
         return product_barcode
 
@@ -131,14 +138,10 @@ class ApiCollectingData:
 
 def main():
     """ Initialize the data collect """
-
     downloader = ApiCollectingData()
+    all_products = downloader.connect_and_dowload_per_barcode()
 
-    step_category = downloader.connect_and_dowload_per_category()
-    downloader.format_final_response(step_category)
-
-    downloader.connect_and_dowload_per_barcode()
-
+    # downloader.format_final_response(all_products)
 
 if __name__ == "__main__":
     main()

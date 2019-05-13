@@ -4,6 +4,7 @@
 
 from faker import Faker
 from random import randint, sample
+from passlib.hash import pbkdf2_sha256
 
 fake = Faker("fr_FR")
 
@@ -20,7 +21,7 @@ class FakeCollectingData:
     def address(self):
         numb = self.number_random(1, 9999)
         street = fake.street_name()
-        return numb, street
+        return f"{numb} {street}"
 
     def postal_zip(self):
         postal_zip = self.number_random(1, 9999)
@@ -38,14 +39,14 @@ class FakeCollectingData:
                           'Bell ' + random_num,
                           '')
         complement = sample(complement_list, 1)
-        return complement
+        return complement[0]
 
     def fake_address(self):
-        adress = self.address()
+        address = self.address()
         postal_zip = self.postal_zip()
         city = self.city()
         complement = self.complement_address()
-        return adress, postal_zip, city, complement
+        return address, postal_zip, city, complement
 
 # Civility attribute section:
     def fake_first_name(self):
@@ -58,13 +59,7 @@ class FakeCollectingData:
 
 # Password attribute section:
     def fake_password(self):
-        char = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ \
-                 abcdefghijklmnopqrstuvwxyz \
-                 0123456789/*.:?!")
-        password = ""
-        for i in range(10):
-            password = password + char[randint(0, len(char) - 4)]
-        return password
+        return pbkdf2_sha256.hash("Oc_pizza")
 
 # Mail attribute section:
     def fake_mail(self):
@@ -72,7 +67,7 @@ class FakeCollectingData:
         return mail
 
 # Phone attribute section:
-    def fake_telephone(self):
+    def fake_phone(self):
         prefix = "+3356",  "+0176", "+0450", "+0629"
         form = sample(prefix, 1)
         number = self.number_random(1, 999999)
@@ -141,10 +136,9 @@ class FakeCollectingData:
 def main():
     """ Initialize the data collect """
 
+
     init = FakeCollectingData()
 
-    fake = init.fake_address()
-    print(fake)
 
 if __name__ == "__main__":
     main()
