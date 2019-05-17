@@ -124,7 +124,6 @@ class Invoice:
 
 @dataclass
 class Ingredient:
-    designation: str
     weight: float
     # Id is AUTO_INCREMENT
     id: int = None
@@ -154,7 +153,6 @@ class ProductStock:
     # Attribute
     name_product: str
     weight: float
-    conditioning: str
     quantity: float
 
 @dataclass

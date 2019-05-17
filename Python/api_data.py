@@ -81,26 +81,25 @@ class ApiCollectingData:
             products_section = response.json()
             products_barcode = products_section['product']
 
-            Ingredients_id = self.barcode(products_barcode)
+            ingredients_id = self.barcode(products_barcode)
             name_product = self.name(products_barcode)
             weight = self.weight(products_barcode)
 
             categories = self.category_barcode(products_barcode)
             designation = self.designation(products_barcode)
 
-            key_barcode = (Ingredients_id,
+            key_barcode = (ingredients_id,
                            name_product.upper(),
                            designation,
                            categories.upper(),
                            weight)
             formatting = key_barcode
             product_barcode.append(formatting)
-            print('id_produit :', int(Ingredients_id), '\n',
+            print('id_produit :', int(ingredients_id), '\n',
                   'name_product :', name_product.upper(), '\n',
                   # 'présent dans :', categories, '\n',
                   'designation :', designation.upper(), '\n',
                   'weight : ', weight, '\n',
-
                   f"Nous avons récupéré {len(product_barcode)} produits", '\n' * 2)
         return product_barcode
 
@@ -139,9 +138,11 @@ class ApiCollectingData:
 def main():
     """ Initialize the data collect """
     downloader = ApiCollectingData()
-    all_products = downloader.connect_and_dowload_per_barcode()
 
+    all_products = downloader.connect_and_dowload_per_barcode()
     # downloader.format_final_response(all_products)
+    downloader.name(['product_name_fr'])
+
 
 if __name__ == "__main__":
     main()
