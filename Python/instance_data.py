@@ -301,6 +301,169 @@ class EmployeeRepository(Repository):
         return [self.table.Employee(**data) for data in rows]
 
 
+"""Stock SQL code"""
+
+
+class ProductTypeRepository(Repository):
+
+    def save(self, instance):
+        data = asdict(instance)
+        self.db.query("""
+            INSERT INTO ProductType(product_type)
+            VALUES (:product_type)
+            """, **data)
+        instance.id = self.db.query("""
+            SELECT id FROM ProductType
+            ORDER BY id DESC LIMIT 1
+            """).all(as_dict=True)[0]['id']
+
+    def get_all(self):
+        rows = self.db.query("""
+            SELECT * FROM ProductType
+            """).all(as_dict=True)
+        return [self.table.ProductType(**data) for data in rows]
+
+
+class ProductRepository(Repository):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.product_type = ProductTypeRepository(self.db)
+
+    def save(self, instance):
+        self.product_type.save(instance.product_type_id)
+        data = asdict(instance)
+        data['ProductType_id'] = instance.ProductType.id
+        self.db.query("""
+            INSERT INTO Product(id,
+                                product_name, 
+                                product_price,
+                                ProductType_id)
+            VALUES (:id,
+                    :product_name, 
+                    :product_price,
+                    :ProductType_id)
+            """, **data)
+        instance.id = self.db.query("""
+            SELECT id FROM Product
+            ORDER BY id DESC LIMIT 1
+            """).all(as_dict=True)[0]['id']
+
+    def get_all(self):
+        rows = self.db.query("""
+            SELECT * FROM Product
+            """).all(as_dict=True)
+        return [self.table.Product(**data) for data in rows]
+
+
+class IngredientRepository(Repository):
+
+    def save(self, instance):
+        data = asdict(instance)
+        self.db.query("""
+            INSERT INTO Ingredient(product_name, 
+                                   weight)
+            VALUES (:product_name, 
+                    :weight)
+            """, **data)
+        instance.id = self.db.query("""
+            SELECT id FROM Ingredient
+            ORDER BY id DESC LIMIT 1
+            """).all(as_dict=True)[0]['id']
+
+    def get_all(self):
+        rows = self.db.query("""
+            SELECT * FROM Ingredient
+            """).all(as_dict=True)
+        return [self.table.Ingredient(**data) for data in rows]
+
+
+"""Associate SQL code"""
+
+
+class ProductStockRepository(Repository):
+
+    def save(self, instance):
+        data = asdict(instance)
+        data['Ingredient_id'] = instance.Ingredient.id
+        data['Restaurant_id'] = instance.Restaurant.id
+        self.db.query("""
+            INSERT INTO ProductStock(Ingredient_id,
+                                     Restaurant_id,
+                                     weight, 
+                                     quantity)
+            VALUES (:Ingredient_id,
+                    :Restaurant_id,
+                    :weight, 
+                    :quantity)
+            """, **data)
+        instance.id = self.db.query("""
+            SELECT id FROM ProductStock 
+            ORDER BY id DESC LIMIT 1
+            """).all(as_dict=True)[0]['id']
+
+    def get_all(self):
+        rows = self.db.query("""
+            SELECT * FROM ProductStock
+            """).all(as_dict=True)
+        return [self.table.ProductStock(**data) for data in rows]
+
+
+class CompositionRepository(Repository):
+
+    def save(self, instance):
+        data = asdict(instance)
+        data['Ingredient_id'] = instance.Ingredient.id
+        data['Product_id'] = instance.Product.id
+        self.db.query("""
+            INSERT INTO Composition(Ingredient_id,
+                                    Product_id,
+                                    quantity)
+            VALUES (:Ingredient_id,
+                    :Product_id,
+                    :quantity)
+            """, **data)
+        instance.id = self.db.query("""
+            SELECT id FROM Composition 
+            ORDER BY id DESC LIMIT 1
+            """).all(as_dict=True)[0]['id']
+
+    def get_all(self):
+        rows = self.db.query("""
+            SELECT * FROM Composition
+            """).all(as_dict=True)
+        return [self.table.Composition(**data) for data in rows]
+
+
+class ShoppingCartRepository(Repository):
+
+    def save(self, instance):
+        data = asdict(instance)
+        data['Order_id'] = instance.Order.id
+        data['Product_id'] = instance.Product.id
+        self.db.query("""
+            INSERT INTO ShoppingCart(Order_id,
+                                     Product_id,
+                                     article, 
+                                     quantity, 
+                                     price)
+            VALUES (:Order_id,
+                    :Product_id,
+                    :article, 
+                    :quantity, 
+                    :price)
+            """, **data)
+        instance.id = self.db.query("""
+            SELECT id FROM ShoppingCart 
+            ORDER BY id DESC LIMIT 1
+            """).all(as_dict=True)[0]['id']
+
+    def get_all(self):
+        rows = self.db.query("""
+            SELECT * FROM ShoppingCart
+            """).all(as_dict=True)
+        return [self.table.ShoppingCart(**data) for data in rows]
+
+
 """Billing SQL code"""
 
 
@@ -394,164 +557,6 @@ class InvoiceRepository(Repository):
             SELECT * FROM Invoice
             """).all(as_dict=True)
         return [self.table.Invoice(**data) for data in rows]
-
-
-"""Stock SQL code"""
-
-
-class IngredientRepository(Repository):
-
-    def save(self, instance):
-        data = asdict(instance)
-        self.db.query("""
-            INSERT INTO Ingredient(designation, 
-                                   weight)
-            VALUES (:designation, 
-                    :weight)
-            """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Ingredient
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
-
-    def get_all(self):
-        rows = self.db.query("""
-            SELECT * FROM Ingredient
-            """).all(as_dict=True)
-        return [self.table.Ingredient(**data) for data in rows]
-
-
-class ProductTypeRepository(Repository):
-
-    def save(self, instance):
-        data = asdict(instance)
-        self.db.query("""
-            INSERT INTO ProductType(product_type)
-            VALUES (:product_type)
-            """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM ProductType
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
-
-    def get_all(self):
-        rows = self.db.query("""
-            SELECT * FROM ProductType
-            """).all(as_dict=True)
-        return [self.table.ProductType(**data) for data in rows]
-
-
-class ProductRepository(Repository):
-
-    def save(self, instance):
-        data = asdict(instance)
-        self.db.query("""
-            INSERT INTO Product(product_name, 
-                                product_price)
-            VALUES (:product_name, 
-                    :product_price)
-            """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Product
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
-
-    def get_all(self):
-        rows = self.db.query("""
-            SELECT * FROM Product
-            """).all(as_dict=True)
-        return [self.table.Product(**data) for data in rows]
-
-
-"""Associate SQL code"""
-
-
-class ProductStockRepository(Repository):
-
-    def save(self, instance):
-        data = asdict(instance)
-        data['Ingredient_id'] = instance.Ingredient.id
-        data['Restaurant_id'] = instance.Restaurant.id
-        self.db.query("""
-            INSERT INTO ProductStock(Ingredient_id,
-                                     Restaurant_id,
-                                     name_product, 
-                                     weight, 
-                                     conditioning, 
-                                     quantity)
-            VALUES (:Ingredient_id,
-                    :Restaurant_id,
-                    :name_product, 
-                    :weight, 
-                    :conditioning, 
-                    :quantity)
-            """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM ProductStock 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
-
-    def get_all(self):
-        rows = self.db.query("""
-            SELECT * FROM ProductStock
-            """).all(as_dict=True)
-        return [self.table.ProductStock(**data) for data in rows]
-
-
-class CompositionRepository(Repository):
-
-    def save(self, instance):
-        data = asdict(instance)
-        data['Ingredient_id'] = instance.Ingredient.id
-        data['Product_id'] = instance.Product.id
-        self.db.query("""
-            INSERT INTO Composition(Ingredient_id,
-                                    Product_id,
-                                    quantity)
-            VALUES (:Ingredient_id,
-                    :Product_id,
-                    :quantity)
-            """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Composition 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
-
-    def get_all(self):
-        rows = self.db.query("""
-            SELECT * FROM Composition
-            """).all(as_dict=True)
-        return [self.table.Composition(**data) for data in rows]
-
-
-class ShoppingCartRepository(Repository):
-
-    def save(self, instance):
-        data = asdict(instance)
-        data['Order_id'] = instance.Order.id
-        data['Product_id'] = instance.Product.id
-        self.db.query("""
-            INSERT INTO ShoppingCart(Order_id,
-                                     Product_id,
-                                     article, 
-                                     quantity, 
-                                     price)
-            VALUES (:Order_id,
-                    :Product_id,
-                    :article, 
-                    :quantity, 
-                    :price)
-            """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM ShoppingCart 
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
-
-    def get_all(self):
-        rows = self.db.query("""
-            SELECT * FROM ShoppingCart
-            """).all(as_dict=True)
-        return [self.table.ShoppingCart(**data) for data in rows]
 
 
 def main():

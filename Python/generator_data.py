@@ -3,7 +3,8 @@
 
 
 from Python.faker_data import FakeCollectingData
-from Python.dataclass_data import Restaurant, Address, Phone, Email, Actor
+from Python.api_data import ApiCollectingData
+from Python.dataclass_data import Restaurant, Address, Phone, Email, Product, ProductType
 
 class GeneratorData:
     """
@@ -12,6 +13,7 @@ class GeneratorData:
 
     def __init__(self):
         self.fake = FakeCollectingData()
+        self.api = ApiCollectingData()
 
     # - status_list
     def gen_status_list(self):
@@ -58,75 +60,22 @@ class GeneratorData:
             return restaurant_address
         return restaurant_address[number]
 
+    def generate_product(self, number=1):
 
-"""
-Product: 
-        product_name:
-        product_price:
-        ProductType_id:
-        
-Ingredient: 
-        designation:
-        weight:
- 
- 
-ProductStock:
-        Ingredients_id:
-        Restaurants_id:
-        name_product:
-        weight:
-        conditioning:
-        quantity:
+        return [Product(
+                        id=self.api.key_id(select=1),
+                        product_name=self.api.key_name(select=1),
+                        product_price=self.fake.fake_price(),
+                        ProductType_id=1,
+        )
+                for _ in range(number)]
 
-composition:
-        Ingredients_id
-        Products_id:
-        quantity:
-
-ShoppingCart:
-        Orders_id:
-        Products_id:
-        article:
-        quantity:
-        price:
-        
-"""
-
-#     def actors(self, number=1):
-#         return [
-#             Actor(
-#                  restaurant_name="OC Pizza Paris X",
-#                 #                 address=Address(
-#                 #                     address="10 rue Oc",
-#                 #                     zip_code="75 000",
-#                 #                     city="Paris X em",
-#                 #                     additional_address="",
-#                 #                 ),
-#                 #                 phone=Phone(
-#                 #                     phone="+0145486730",
-#                 #                 ),
-#                 #                 email=Email(
-#                 #                     mail="Oc_Pizza_Paris_Xem@Oc_pizza.com",
-#                 #                 )),
-#                 first_name=self.fake.fake_first_name(),
-#                 last_name=self.fake.fake_last_name(),
-#                 authentication_password=self.fake.fake_password(),
-#
-#                 address_id=Address(*self.fake.fake_address()),
-#                 phone_id=Phone(
-#                     phone=self.fake.fake_phone(),
-#                 ),
-#                 mail_id=Email(
-#                     mail=self.fake.fake_mail(),
-#                 )
-#             )
-#             for _ in range(number)
-#         ]
 
 def main():
     """ Initialize the data collect """
     gen = GeneratorData()
-
+    type = gen.gen_product_type()
+    product = gen.generate_product()
     # status = [Status(**data) for data in fake.fake_status(number=None)]
 
 if __name__ == "__main__":

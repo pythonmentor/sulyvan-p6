@@ -260,7 +260,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Ingredient` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `designation` VARCHAR(255) NOT NULL,
+  `product_name` VARCHAR(155) NOT NULL,
   `weight` DECIMAL(5,2) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -325,9 +325,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`ProductStock` (
   `Ingredients_id` INT NOT NULL,
   `Restaurants_id` INT NOT NULL,
-  `name_product` VARCHAR(155) NOT NULL,
   `weight` DECIMAL(5,2) NOT NULL,
-  `conditioning` VARCHAR(255) NOT NULL,
   `quantity` DECIMAL(5,2) NOT NULL,
   PRIMARY KEY (`Ingredients_id`, `Restaurants_id`),
   INDEX `fk_Ingredients_has_Restaurants_Restaurants1_idx` (`Restaurants_id` ASC) VISIBLE,

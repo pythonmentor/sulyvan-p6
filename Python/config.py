@@ -3,10 +3,12 @@
 
 import records
 
-CATEGORIES = ['Sodas',
-              'Eaux',
-              'Salades',
-              'Glaces']
+CATEGORIES = ['Salade',
+              'Entrée',
+              'Pizza',
+              'Dessert',
+              'Boisson',
+              'soda']
 
 # ROYALE_PIZZA_ =  {'7610100514654': 1,'3038352876506': 90,'7613034232465': 120,'3333160002025': 89,'0060383195830': 120,'3076820002064': 5}
 

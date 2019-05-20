@@ -7,7 +7,7 @@ from Python.faker_data import FakeCollectingData
 from Python.generator_data import GeneratorData
 from Python.dataclass_data import (Status, ProductType, Payment)
 from Python.instance_data import (StatusRepository, ProductTypeRepository, PaymentRepository,
-                                  RestaurantRepository, ActorRepository)
+                                  RestaurantRepository, ActorRepository, ProductRepository)
 
 class InsertData:
     """
@@ -54,6 +54,11 @@ class InsertData:
         actors = ActorRepository(db)
         actors.save_all(generate.actors(20))
 
+    def insert_product(self, generate):
+        product =ProductRepository(db)
+        product.save_all(generate.generate_product())
+
+
     def customer_insert(self):
         customer = ['restaurant_id',
                     'actor_attribute',
@@ -81,10 +86,10 @@ def main():
     init = InsertData()
     generate = GeneratorData()
     fake = FakeCollectingData()
-    # init.drop_and_create()
-    # init.insert_restaurant_list(generate)
 
-    # init.insert_actor_list(generate)
+    # init.insert_product_type(generate)
+    init.insert_product(generate)
+
 
 if __name__ == "__main__":
     main()

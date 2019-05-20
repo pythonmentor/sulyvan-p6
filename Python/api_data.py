@@ -38,41 +38,21 @@ class ApiCollectingData:
                 product['main_category'] = category
                 product_categories.extend(products_section)
             # pprint(product_categories)
+
         return product_categories
 
     def format_final_response(self, all_products):
         """ Formatted the response just harvest the categories selected """
-        product_final = []
         keys = ['id',
                 'product_name_fr',
                 'main_category',
                 'generic_name_fr']
         for product in all_products:
             if self.validate_the_data(keys, product):
-
-                id = self.barcode(product)
-                product_name = self.name(product)
-                product_type = self.sub_category(product)
-                designation = self.designation(product)
-
-                key = (id,
-                       product_name,
-                       product_type,
-                       designation)
-                formatting = key
-                product_final.append(formatting)
-                print('id :', int(id), '\n',
-                      'product_name :', product_name.upper(), '\n',
-                      'product_type :', product_type, '\n',
-                      'designation :', designation.upper(), '\n',
-                      f"Nous avons récupéré "
-                      f"{len(product_final)} "
-                      f"produits", '\n'*2)
-        return product_final
+                return product
 
     def connect_and_dowload_per_barcode(self):
         """ Use the configuration for the connecting interface """
-        product_barcode = []
         for barcode in ROYALE_PIZZA:
             bar_code = (f"https://fr.openfoodfacts.org/api/v0/produit/" 
                         f"{barcode}")
@@ -80,52 +60,7 @@ class ApiCollectingData:
             response = req.get(bar_code, params=config)
             products_section = response.json()
             products_barcode = products_section['product']
-
-            ingredients_id = self.barcode(products_barcode)
-            name_product = self.name(products_barcode)
-            weight = self.weight(products_barcode)
-
-            categories = self.category_barcode(products_barcode)
-            designation = self.designation(products_barcode)
-
-            key_barcode = (ingredients_id,
-                           name_product.upper(),
-                           designation,
-                           categories.upper(),
-                           weight)
-            formatting = key_barcode
-            product_barcode.append(formatting)
-            print('id_produit :', int(ingredients_id), '\n',
-                  'name_product :', name_product.upper(), '\n',
-                  # 'présent dans :', categories, '\n',
-                  'designation :', designation.upper(), '\n',
-                  'weight : ', weight, '\n',
-                  f"Nous avons récupéré {len(product_barcode)} produits", '\n' * 2)
-        return product_barcode
-
-    def barcode(self, attribute):
-        barcode = attribute['id']
-        return barcode
-
-    def name(self, attribute):
-        name = attribute['product_name_fr']
-        return name
-
-    def sub_category(self, attribute):
-        sub_category = attribute['main_category']
-        return sub_category
-
-    def category_barcode(self, attribute):
-        sub_category = attribute['categories']
-        return sub_category
-
-    def designation(self, attribute):
-        designation = attribute['generic_name_fr']
-        return designation
-
-    def weight(self, attribute):
-        weight = attribute['quantity']
-        return weight
+            return products_barcode
 
     def validate_the_data(self, keys, products_section):
         """ Validate the complete fields """
@@ -134,14 +69,41 @@ class ApiCollectingData:
                 return False
         return True
 
+    def key_id(self, select=None):
+        all_product = self.connect_and_dowload_per_category()
+        id_product = self.format_final_response(all_product)
+        id_barre_code = self.connect_and_dowload_per_barcode()
+        if select == 1:
+            return id_product['id']
+        return id_barre_code['id']
+
+    def key_name(self, select=None):
+        all_product = self.connect_and_dowload_per_category()
+        name_product = self.format_final_response(all_product)
+        name_barre_code = self.connect_and_dowload_per_barcode()
+        if select == 1:
+            return name_product['product_name_fr']
+        return name_barre_code['product_name_fr']
+
+    def key_weight(self):
+        weight_barre_code = self.connect_and_dowload_per_barcode()
+        return weight_barre_code['quantity']
+
+    def key_type(self):
+        all_product = self.connect_and_dowload_per_category()
+        name_product = self.format_final_response(all_product)
+        print(name_product['main_category'])
+        return name_product['main_category']
+
 
 def main():
     """ Initialize the data collect """
     downloader = ApiCollectingData()
 
-    all_products = downloader.connect_and_dowload_per_barcode()
+    all_products = downloader.connect_and_dowload_per_category()
+    # print(all_products)
+    downloader.key_type()
     # downloader.format_final_response(all_products)
-    downloader.name(['product_name_fr'])
 
 
 if __name__ == "__main__":

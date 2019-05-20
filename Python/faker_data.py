@@ -99,17 +99,19 @@ class FakeCollectingData:
 
 # Product type attribute section:
     def fake_product_type(self, number=1):
-        product_type = ('Salade/Entrée',
+        product_type = ('Salade',
+                        'Entrée',
                         'Pizza',
                         'Dessert',
-                        'Boissons',
+                        'Boisson',
+                        'soda',
                         'Supplément')
         type = sample(product_type, number if number else len(product_type))
         return [{'product_type': data} for data in type]
 
 # Administrative attribute section:
     def fake_price(self):
-        price = str(self.number_random(1, 99)) + '.' + str(self.number_random(1, 99) + "€")
+        price = str(self.number_random(1, 99)) + '.' + str(self.number_random(1, 99))
         return price
 
     def fake_payment(self, number=1):

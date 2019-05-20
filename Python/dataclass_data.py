@@ -15,11 +15,13 @@ class Email:
     # Id is AUTO_INCREMENT
     id: int = None
 
+
 @dataclass
 class Phone:
     phone: str
     # Id is AUTO_INCREMENT
     id: int = None
+
 
 @dataclass
 class Address:
@@ -56,6 +58,7 @@ class Status:
     # Id is AUTO_INCREMENT
     id: int = None
 
+
 @dataclass
 class Restaurant:
     restaurant_name: str
@@ -65,6 +68,7 @@ class Restaurant:
     email: Email
     # Id is AUTO_INCREMENT
     id: int = None
+
 
 @dataclass
 class Employee:
@@ -89,6 +93,7 @@ class Payment:
     # Id is AUTO_INCREMENT
     id: int = None
 
+
 @dataclass
 class Order:
     product_type: str
@@ -101,6 +106,7 @@ class Order:
     # Id is AUTO_INCREMENT
     id: int = None
 
+
 @dataclass
 class Invoice:
     invoice_date: str
@@ -108,7 +114,7 @@ class Invoice:
     product_price: Decimal
     product_tax: float
 
-    payment_id: int # J'ai un doute sur cet attribut, qui n'est pas une clef ni clef etrangere ni id en auto increment
+    payment_id: int
 
     # Foreign key attribute
     address_id: Address
@@ -123,23 +129,28 @@ class Invoice:
 
 
 @dataclass
-class Ingredient:
-    weight: float
-    # Id is AUTO_INCREMENT
-    id: int = None
-
-@dataclass
 class ProductType:
     product_type: str
     # Id is AUTO_INCREMENT
     id: int = None
 
+
 @dataclass
 class Product:
     product_name: str
     product_price: Decimal
+    # Foreign key attribute
+    ProductType_id = ProductType
     # Id is not AUTO_INCREMENT
-    id: int = int
+    id: int = Decimal
+
+
+@dataclass
+class Ingredient:
+    product_name: str
+    weight: float
+    # Id is AUTO_INCREMENT
+    id: int = None
 
 
 """Associate stock entity"""
@@ -151,9 +162,9 @@ class ProductStock:
     ingredients_id: Ingredient
     restaurants_id: Restaurant
     # Attribute
-    name_product: str
     weight: float
     quantity: float
+
 
 @dataclass
 class Composition:
@@ -162,6 +173,7 @@ class Composition:
     products_id: Product
     # Attribute
     quantity: float
+
 
 @dataclass
 class ShoppingCart:
