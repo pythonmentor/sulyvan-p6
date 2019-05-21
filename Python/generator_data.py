@@ -4,7 +4,7 @@
 
 from Python.faker_data import FakeCollectingData
 from Python.api_data import ApiCollectingData
-from Python.dataclass_data import Restaurant, Address, Phone, Email, Product, ProductType
+from Python.dataclass_data import Restaurant, Address, Phone, Email, Actor
 
 class GeneratorData:
     """
@@ -60,16 +60,9 @@ class GeneratorData:
             return restaurant_address
         return restaurant_address[number]
 
+
     def generate_product(self, number=1):
-
-        return [Product(
-                        id=self.api.key_id(select=1),
-                        product_name=self.api.key_name(select=1),
-                        product_price=self.fake.fake_price(),
-                        ProductType_id=1,
-        )
-                for _ in range(number)]
-
+        pass
 
 def main():
     """ Initialize the data collect """

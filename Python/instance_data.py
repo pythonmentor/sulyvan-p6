@@ -327,12 +327,14 @@ class ProductTypeRepository(Repository):
 class ProductRepository(Repository):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.product_type = ProductTypeRepository(self.db)
+        self.producttype_id = ProductTypeRepository(self.db)
 
     def save(self, instance):
-        self.product_type.save(instance.product_type_id)
+        self.producttype_id.save(instance.ProductType_id)
+
         data = asdict(instance)
-        data['ProductType_id'] = instance.ProductType.id
+        data['ProductType_id'] = instance.ProductType_id.id
+
         self.db.query("""
             INSERT INTO Product(id,
                                 product_name, 
@@ -348,11 +350,25 @@ class ProductRepository(Repository):
             ORDER BY id DESC LIMIT 1
             """).all(as_dict=True)[0]['id']
 
+    def get(self, id):
+        rows = self.db.query("""
+            SELECT * FROM ProductType WHERE id = :id
+            """, id=id).as_dict()
+
+        for actor in rows:
+            self._get_foreign_objects(actor)
+            return self.table.Restaurant(**actor)
+
+
     def get_all(self):
         rows = self.db.query("""
             SELECT * FROM Product
             """).all(as_dict=True)
         return [self.table.Product(**data) for data in rows]
+
+    def _get_foreign_objects(self, product):
+        product['ProductType_id'] = self.Producttype_id.get(product['ProductType_id'])
+        del product['Addresses_id']
 
 
 class IngredientRepository(Repository):

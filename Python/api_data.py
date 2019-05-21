@@ -92,7 +92,6 @@ class ApiCollectingData:
     def key_type(self):
         all_product = self.connect_and_dowload_per_category()
         name_product = self.format_final_response(all_product)
-        print(name_product['main_category'])
         return name_product['main_category']
 
 
