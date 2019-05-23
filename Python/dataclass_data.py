@@ -42,9 +42,9 @@ class Actor:
     last_name: str
     authentication_password: str
     # Foreign key attribute
-    mail_id: Email
-    phone_id: Phone
-    address_id: Address
+    mail: Email
+    phone: Phone
+    address: Address
     # Id is AUTO_INCREMENT
     id: int = None
 
@@ -78,9 +78,7 @@ class Employee:
     # Foreign key attribute
     status_id: Status
     restaurant_id: Restaurant
-
     actor_id: Actor
-    # L'id des employes est une FK qui pointe ver l'Id des acteurs, donc == à "Actors_id"?
     id: int
 
 
@@ -139,10 +137,11 @@ class ProductType:
 class Product:
     product_name: str
     product_price: Decimal
+    id: int
+
     # Foreign key attribute
-    ProductType_id = ProductType
+    ProductType: ProductType
     # Id is not AUTO_INCREMENT
-    id: int = Decimal
 
 
 @dataclass

@@ -1,10 +1,11 @@
 # -*- PipEnv -*-
 # -*- coding: Utf-8 -*-
 
-
+from Python.config import db
 from Python.faker_data import FakeCollectingData
 from Python.api_data import ApiCollectingData
-from Python.dataclass_data import Restaurant, Address, Phone, Email, Actor
+from Python.instance_data import ProductTypeRepository
+from Python.dataclass_data import Restaurant, Address, Phone, Email, Product
 
 class GeneratorData:
     """
@@ -60,9 +61,49 @@ class GeneratorData:
             return restaurant_address
         return restaurant_address[number]
 
+    def generate_product(self):
+        products=[]
+        product_types = ProductTypeRepository(db)
+        for product in self.api.all_product:
+            products.append(Product(
+                id=product['code'],
+                product_name=product['product_name'],
+                product_price=self.fake.fake_price(),
+                ProductType=product_types.get_by_name(product_type=product['main_category'])))
+        return products
 
-    def generate_product(self, number=1):
-        pass
+
+    #     def actors(self, number=1):
+    #         return [
+    #             Actor(
+    #                  restaurant_name="OC Pizza Paris X",
+    #                 #                 address=Address(
+    #                 #                     address="10 rue Oc",
+    #                 #                     zip_code="75 000",
+    #                 #                     city="Paris X em",
+    #                 #                     additional_address="",
+    #                 #                 ),
+    #                 #                 phone=Phone(
+    #                 #                     phone="+0145486730",
+    #                 #                 ),
+    #                 #                 email=Email(
+    #                 #                     mail="Oc_Pizza_Paris_Xem@Oc_pizza.com",
+    #                 #                 )),
+    #                 first_name=self.fake.fake_first_name(),
+    #                 last_name=self.fake.fake_last_name(),
+    #                 authentication_password=self.fake.fake_password(),
+    #
+    #                 address_id=Address(*self.fake.fake_address()),
+    #                 phone_id=Phone(
+    #                     phone=self.fake.fake_phone(),
+    #                 ),
+    #                 mail_id=Email(
+    #                     mail=self.fake.fake_mail(),
+    #                 )
+    #             )
+    #             for _ in range(number)
+    #         ]
+
 
 def main():
     """ Initialize the data collect """

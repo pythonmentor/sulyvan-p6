@@ -136,13 +136,13 @@ class ActorRepository(Repository):
         self.emails = EmailRepository(self.db)
 
     def save(self, instance):
-        self.address.save(instance.address_id)
-        self.phones.save(instance.phone_id)
-        self.emails.save(instance.mail_id)
+        self.address.save(instance.addres)
+        self.phones.save(instance.phone)
+        self.emails.save(instance.mail)
         data = asdict(instance)
-        data['Emails_id'] = instance.mail_id.id
-        data['Phones_id'] = instance.phone_id.id
-        data['Addresses_id'] = instance.address_id.id
+        data['Emails_id'] = instance.mail.id
+        data['Phones_id'] = instance.phone.id
+        data['Addresses_id'] = instance.addresse.id
         self.db.query("""
             INSERT INTO Actor(first_name, 
                               last_name, 
@@ -323,17 +323,39 @@ class ProductTypeRepository(Repository):
             """).all(as_dict=True)
         return [self.table.ProductType(**data) for data in rows]
 
+    def get(self, type_product_id):
+        rows =  self.db.query("""
+            SELECT * FROM ProductType 
+            WHERE id = :type_product
+            """, type_product=type_product_id).all(as_dict=True)
+        return [self.table.ProductType(**data) for data in rows][0]
+
+    def get_by_name(self, product_type):
+        rows =  self.db.query("""
+            SELECT * FROM ProductType 
+            WHERE product_type = :product_type
+            """, product_type=product_type).all(as_dict=True)
+        return [self.table.ProductType(**data) for data in rows][0]
+
+    def get_by_name_(self, type):
+        rows = self.db.query("""
+             SELECT id FROM producttype 
+             WHERE product_type = :type
+            """, type=type).all(as_dict=True)
+        # print([self.table.ProductType(**data) for data in rows][0])
+        # return [self.table.ProductType(**data) for data in rows][0]
+        return [self.table.ProductType(**data) for data in rows][0]
+
 
 class ProductRepository(Repository):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.producttype_id = ProductTypeRepository(self.db)
+        self.product_types = ProductTypeRepository(self.db)
 
     def save(self, instance):
-        self.producttype_id.save(instance.ProductType_id)
-
+        self.product_types.save(instance.ProductType)
         data = asdict(instance)
-        data['ProductType_id'] = instance.ProductType_id.id
+        data['ProductType_id'] = instance.ProductType.id
 
         self.db.query("""
             INSERT INTO Product(id,
@@ -345,20 +367,15 @@ class ProductRepository(Repository):
                     :product_price,
                     :ProductType_id)
             """, **data)
-        instance.id = self.db.query("""
-            SELECT id FROM Product
-            ORDER BY id DESC LIMIT 1
-            """).all(as_dict=True)[0]['id']
+
 
     def get(self, id):
         rows = self.db.query("""
             SELECT * FROM ProductType WHERE id = :id
             """, id=id).as_dict()
-
-        for actor in rows:
-            self._get_foreign_objects(actor)
-            return self.table.Restaurant(**actor)
-
+        for row in rows:
+            self._get_foreign_objects(row)
+            return self.table.Product(**row)
 
     def get_all(self):
         rows = self.db.query("""
@@ -367,8 +384,8 @@ class ProductRepository(Repository):
         return [self.table.Product(**data) for data in rows]
 
     def _get_foreign_objects(self, product):
-        product['ProductType_id'] = self.Producttype_id.get(product['ProductType_id'])
-        del product['Addresses_id']
+        product['ProductType'] = self.product_types.get(product['ProductType_id'])
+        del product['ProductType_id']
 
 
 class IngredientRepository(Repository):
@@ -581,7 +598,8 @@ def main():
                       "OCP6:OC_STUDENT@localhost/"
                       "Oc_Pizza?charset=utf8mb4")
     EmailRepository(db)    # create = Repository(db)
-
+    # init = ProductTypeRepository(db)
+    # init.get_by_name_("boisson")
 
 if __name__ == "__main__":
     main()

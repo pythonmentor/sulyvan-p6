@@ -55,7 +55,7 @@ class InsertData:
         actors.save_all(generate.actors(20))
 
     def insert_product(self, generate):
-        product =ProductRepository(db)
+        product = ProductRepository(db)
         product.save_all(generate.generate_product())
 
 

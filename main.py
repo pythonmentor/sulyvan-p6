@@ -255,5 +255,20 @@ ShoppingCart:
         article: str
         quantity: int
         price: Decimal
+        
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '1');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '2');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '3');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '4');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '5');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '6');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '7');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '8');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '9');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '10');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '11');
+SELECT FROM `oc_pizza`.`producttype` WHERE (`id` = '12');        
+        
+
 """
 

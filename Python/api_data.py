@@ -16,7 +16,7 @@ class ApiCollectingData:
 
     def __init__(self):
         """ The constructor is not used here """
-        pass
+        self.all_product = self.connect_and_dowload_per_category()
 
     def connect_and_dowload_per_category(self):
         """ Use the configuration for the connecting interface """
@@ -38,7 +38,6 @@ class ApiCollectingData:
                 product['main_category'] = category
                 product_categories.extend(products_section)
             # pprint(product_categories)
-
         return product_categories
 
     def format_final_response(self, all_products):
@@ -70,16 +69,14 @@ class ApiCollectingData:
         return True
 
     def key_id(self, select=None):
-        all_product = self.connect_and_dowload_per_category()
-        id_product = self.format_final_response(all_product)
+        id_product = self.format_final_response(self.all_product)
         id_barre_code = self.connect_and_dowload_per_barcode()
         if select == 1:
             return id_product['id']
         return id_barre_code['id']
 
     def key_name(self, select=None):
-        all_product = self.connect_and_dowload_per_category()
-        name_product = self.format_final_response(all_product)
+        name_product = self.format_final_response(self.all_product)
         name_barre_code = self.connect_and_dowload_per_barcode()
         if select == 1:
             return name_product['product_name_fr']
@@ -90,8 +87,7 @@ class ApiCollectingData:
         return weight_barre_code['quantity']
 
     def key_type(self):
-        all_product = self.connect_and_dowload_per_category()
-        name_product = self.format_final_response(all_product)
+        name_product = self.format_final_response(self.all_product)
         return name_product['main_category']
 
 
@@ -101,7 +97,7 @@ def main():
 
     all_products = downloader.connect_and_dowload_per_category()
     # print(all_products)
-    downloader.key_type()
+    print(downloader.key_weight())
     # downloader.format_final_response(all_products)
 
 
