@@ -136,13 +136,13 @@ class ActorRepository(Repository):
         self.emails = EmailRepository(self.db)
 
     def save(self, instance):
-        self.address.save(instance.addres)
+        self.address.save(instance.address)
         self.phones.save(instance.phone)
         self.emails.save(instance.mail)
         data = asdict(instance)
         data['Emails_id'] = instance.mail.id
         data['Phones_id'] = instance.phone.id
-        data['Addresses_id'] = instance.addresse.id
+        data['Addresses_id'] = instance.address.id
         self.db.query("""
             INSERT INTO Actor(first_name, 
                               last_name, 
@@ -335,15 +335,6 @@ class ProductTypeRepository(Repository):
             SELECT * FROM ProductType 
             WHERE product_type = :product_type
             """, product_type=product_type).all(as_dict=True)
-        return [self.table.ProductType(**data) for data in rows][0]
-
-    def get_by_name_(self, type):
-        rows = self.db.query("""
-             SELECT id FROM producttype 
-             WHERE product_type = :type
-            """, type=type).all(as_dict=True)
-        # print([self.table.ProductType(**data) for data in rows][0])
-        # return [self.table.ProductType(**data) for data in rows][0]
         return [self.table.ProductType(**data) for data in rows][0]
 
 
@@ -598,8 +589,7 @@ def main():
                       "OCP6:OC_STUDENT@localhost/"
                       "Oc_Pizza?charset=utf8mb4")
     EmailRepository(db)    # create = Repository(db)
-    # init = ProductTypeRepository(db)
-    # init.get_by_name_("boisson")
+
 
 if __name__ == "__main__":
     main()

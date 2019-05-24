@@ -88,7 +88,8 @@ def main():
     fake = FakeCollectingData()
 
     # init.insert_product_type(generate)
-    init.insert_product(generate)
+    # init.insert_product_type(generate)
+    init.insert_actor_list(generate)
 
 
 if __name__ == "__main__":

@@ -126,9 +126,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza`.`employee`
+-- Table `Oc_Pizza`.`Employee`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`employee` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Employee` (
   `id` INT NOT NULL,
   `social_security_numb` VARCHAR(30) NOT NULL,
   `quality` VARCHAR(100) NOT NULL,
@@ -141,6 +141,7 @@ CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`employee` (
   INDEX `fk_Employee_Restaurants1_idx` (`Restaurants_id` ASC) VISIBLE,
   PRIMARY KEY (`Actors_id`, `id`),
   INDEX `fk_Employee_Actors1_idx` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   CONSTRAINT `fk_Employee_Status`
     FOREIGN KEY (`Status_id`)
     REFERENCES `Oc_Pizza`.`Status` (`id`)
@@ -160,9 +161,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza`.`payment`
+-- Table `Oc_Pizza`.`Payment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`payment` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Payment` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `payment_mode` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`))
@@ -229,7 +230,7 @@ CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Invoice` (
   PRIMARY KEY (`id`, `Orders_id`),
   CONSTRAINT `fk_Invoices_payments1`
     FOREIGN KEY (`id`)
-    REFERENCES `Oc_Pizza`.`payment` (`id`)
+    REFERENCES `Oc_Pizza`.`Payment` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_Invoices_Addresses1`
@@ -272,7 +273,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`ProductType` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `product_type` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `product_type_UNIQUE` (`product_type` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -286,6 +288,7 @@ CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Product` (
   `ProductType_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Product_ProductType1_idx` (`ProductType_id` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   CONSTRAINT `fk_Product_ProductType1`
     FOREIGN KEY (`ProductType_id`)
     REFERENCES `Oc_Pizza`.`ProductType` (`id`)
@@ -344,9 +347,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Oc_Pizza`.`composition`
+-- Table `Oc_Pizza`.`Composition`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`composition` (
+CREATE TABLE IF NOT EXISTS `Oc_Pizza`.`Composition` (
   `Ingredients_id` INT NOT NULL,
   `Products_id` BIGINT NOT NULL,
   `quantity` DECIMAL(5,2) NOT NULL,
