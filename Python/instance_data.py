@@ -359,7 +359,6 @@ class ProductRepository(Repository):
                     :ProductType_id)
             """, **data)
 
-
     def get(self, id):
         rows = self.db.query("""
             SELECT * FROM ProductType WHERE id = :id
@@ -377,6 +376,28 @@ class ProductRepository(Repository):
     def _get_foreign_objects(self, product):
         product['ProductType'] = self.product_types.get(product['ProductType_id'])
         del product['ProductType_id']
+
+
+class test_insert(Repository):
+
+    def save(self, instance):
+        data = asdict(instance)
+        self.db.query("""
+            INSERT INTO Product(id,
+                                product_name, 
+                                product_price,
+                                ProductType_id)
+            VALUES (:id,
+                    :product_name, 
+                    :product_price,
+                    :ProductType_id);
+            """, **data)
+
+    def pop_id_product_type(self, tag):
+        return self.db.query("""
+            SELECT id FROM producttype
+            WHERE product_type = :tag;
+            """, tag=tag).all(as_dict=True)
 
 
 class IngredientRepository(Repository):
@@ -588,8 +609,10 @@ def main():
     db = rec.Database("mysql+mysqlconnector://"
                       "OCP6:OC_STUDENT@localhost/"
                       "Oc_Pizza?charset=utf8mb4")
-    EmailRepository(db)    # create = Repository(db)
+    EmailRepository(db)    # create = Repository(db) pop_id_product_type
 
+    test = test_insert(db)
+    print(test.pop_id_product_type('Boisson'))
 
 if __name__ == "__main__":
     main()

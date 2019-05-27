@@ -4,7 +4,7 @@
 from Python.config import db
 from Python.faker_data import FakeCollectingData
 from Python.api_data import ApiCollectingData
-from Python.instance_data import ProductTypeRepository
+from Python.instance_data import ProductTypeRepository, test_insert
 from Python.dataclass_data import Restaurant, Address, Phone, Email, Product, Actor
 
 class GeneratorData:
@@ -78,39 +78,23 @@ class GeneratorData:
             for _ in range(number)
         ]
 
-    def product(self, number=20):
-        return [
-            Product(
-                ProductType=,
-                last_name=self.fake.fake_last_name(),
-                authentication_password=self.fake.fake_password(),
-                address=Address(*self.fake.fake_address()),
-                phone=Phone(
-                     phone=self.fake.fake_phone(),
-                ),
-                mail=Email(
-                    mail=self.fake.fake_mail(),
-                )
-            )
-            for _ in range(number)
-        ]
 
     def generate_product(self):
         products=[]
-        product_types = ProductTypeRepository(db)
+        product_types = test_insert(db)
         for product in self.api.all_product:
             products.append(Product(
                 id=product['code'],
                 product_name=product['product_name'],
                 product_price=self.fake.fake_price(),
-                ProductType=product_types.get_by_name(product_type=product['main_category'])))
-        return products
+                ProductType=product_types.pop_id_product_type(product['main_category'])))
+            return products
 
 
 def main():
     """ Initialize the data collect """
     gen = GeneratorData()
-    # gen.gen_product_type()
+    gen.generate_product()
     # gen.actors()
     # status = [Status(**data) for data in fake.fake_status(number=None)]
 
